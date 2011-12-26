@@ -1,1 +1,1 @@
-cc main.c wavreader.c -lfftw3 -lm
+cc main.c wavreader.c fft.c -lfftw3f -lm
