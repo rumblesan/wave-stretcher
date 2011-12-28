@@ -71,14 +71,14 @@ void next_input_section(struct stretch_data *s) {
     float data;
 
     for (i = 0; i < s->window_size; i++) {
-        j = s->channels * (i + (int)s->input_offset);
+        j = (s->channels * i) + (int)s->input_offset;
         for (k = 0; k < s->channels; k++) {
             data  = s->input_data[j+k];
             s->buffers[k][i] = data;
         }
     }
 
-    s->input_offset += (s->ratio * ((float)s->window_size * 0.5));
+    s->input_offset += s->channels * (s->ratio * ((float)s->window_size * 0.5));
 }
 
 void add_output(struct stretch_data *s, float *buffers[]) {
@@ -99,11 +99,13 @@ void add_output(struct stretch_data *s, float *buffers[]) {
     s->output_size = N;
 
     for (i = 0; i < s->window_size; i++) {
-        j = s->channels * (i + (int)s->output_offset);
+        j = (s->channels * i) + (int)s->output_offset;
         for (k = 0; k < s->channels; k++) {
             data  = buffers[k][i];
+            printf("%i %i %.1f %.1f   ", j, k, data, s->output_data[j+k]);
+            s->output_data[j+k] += data;
         }
-        s->output_data[j] += data;
+        printf("\n");
     }
     s->output_offset += s->channels * (s->window_size / 2);
 }
@@ -120,6 +122,15 @@ void print_next_section(struct stretch_data *s) {
         printf("\n");
     }
 
+}
+
+void print_output(struct stretch_data *s) {
+
+    int i;
+    for (i = 0; i < s->output_size; i++) {
+        printf("%i:%.2f ", i, s->output_data[i]);
+    }
+    printf("\n");
 }
 
 void test_next_input_section() {
@@ -152,6 +163,38 @@ void test_next_input_section() {
 
     next_input_section(&sdata);
     print_next_section(&sdata);
+
+}
+
+void test_add_output() {
+
+    int channels = 2;
+    int samples  = 128;
+    int datasize = channels * samples;
+    int window_size = 8;
+    float ratio = 1.0;
+
+    float *wdata;
+    wdata = (float*) malloc(sizeof(float) * datasize);
+
+    int i,j,k;
+    for (i = 0; i < samples; i++) {
+        j = (i * channels);
+        for (k = 0; k < channels; k++) {
+            wdata[j+k] = 1 + ((float)k/10);
+        }
+    }
+
+    struct stretch_data sdata;
+    setup_stretch(&sdata, wdata, datasize, window_size, channels, ratio);
+
+    next_input_section(&sdata);
+    add_output(&sdata, sdata.buffers);
+    print_output(&sdata);
+
+    next_input_section(&sdata);
+    add_output(&sdata, sdata.buffers);
+    print_output(&sdata);
 
 }
 
