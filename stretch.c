@@ -35,7 +35,7 @@ void setup_stretch (struct stretch_data *s,
 
     s->window_size  = window_size;
     s->channels     = channels;
-    s->ratio        = 0.0;
+    s->ratio        = ratio;
 
     s->finished     = 0;
 
@@ -72,13 +72,16 @@ void next_input_section (struct stretch_data *s) {
 
     for (i = 0; i < s->window_size; i++) {
         j = (s->channels * i) + (int)s->input_offset;
+        printf("%i\n", j);
         for (k = 0; k < s->channels; k++) {
             data  = s->input_data[j+k];
             s->buffers[k][i] = data;
         }
     }
 
-    s->input_offset += s->ratio * (s->window_size * 0.5);
+    printf("%.1f\n", s->input_offset);
+    s->input_offset += s->ratio * ((float)s->window_size * 0.5);
+    printf("%.1f\n", s->input_offset);
 }
 
 void add_output(struct stretch_data *s, float *buffers[]) {
@@ -111,18 +114,13 @@ void add_output(struct stretch_data *s, float *buffers[]) {
 
 void print_next_section (struct stretch_data *s) {
 
-    int i;
+    int i,j;
     for (i = 0; i < s->window_size; i++) {
-        printf("%i  %.1f %.1f\n", i, s->loutput[i], s->routput[i]);
-    }
-
-}
-
-void print_data (struct stretch_data *s) {
-
-    int i;
-    for (i = 0; i < 16; i++) {
-        printf("%i  %.1f\n", i, s->input[i]);
+        printf("%i ", i);
+        for (j = 0; j < s->channels; j++) {
+            printf("%i:%.1f ", j, s->buffers[j][i]);
+        }
+        printf("\n");
     }
 
 }
@@ -132,6 +130,9 @@ void main () {
     int channels = 2;
     int samples  = 128;
     int datasize = channels * samples;
+    int window_size = 8;
+    float ratio = 1.0;
+
     float *wdata;
     wdata = (float*) malloc(sizeof(float) * datasize);
 
@@ -139,23 +140,17 @@ void main () {
     for (i = 0; i < samples; i++) {
         j = (i * channels);
         for (k = 0; k < channels; k++) {
-            wdata[j+k] = 1 + (k/10);
+            wdata[j+k] = (float)i + ((float)k/10);
         }
     }
 
-void setup_stretch (struct stretch_data *s,
-                    float *wavdata,
-                    int input_size,
-                    int window_size,
-                    int channels,
-                    float ratio) {
     struct stretch_data sdata;
-    setup_stretch(&sdata, wdata, 256, 2, 1);
+    setup_stretch(&sdata, wdata, datasize, window_size, channels, ratio);
 
-    get_next_section(&sdata);
+    next_input_section(&sdata);
     print_next_section(&sdata);
 
-    get_next_section(&sdata);
+    next_input_section(&sdata);
     print_next_section(&sdata);
 
 }
