@@ -26,12 +26,12 @@ struct stretch_data {
 
 
 
-void setup_stretch (struct stretch_data *s,
-                    float *wavdata,
-                    int input_size,
-                    int window_size,
-                    int channels,
-                    float ratio) {
+void setup_stretch(struct stretch_data *s,
+                   float *wavdata,
+                   int input_size,
+                   int window_size,
+                   int channels,
+                   float ratio) {
 
     s->window_size  = window_size;
     s->channels     = channels;
@@ -65,23 +65,20 @@ void setup_stretch (struct stretch_data *s,
     }
 }
 
-void next_input_section (struct stretch_data *s) {
+void next_input_section(struct stretch_data *s) {
 
     int i, j, k;
     float data;
 
     for (i = 0; i < s->window_size; i++) {
-        j = (s->channels * i) + (int)s->input_offset;
-        printf("%i\n", j);
+        j = s->channels * (i + (int)s->input_offset);
         for (k = 0; k < s->channels; k++) {
             data  = s->input_data[j+k];
             s->buffers[k][i] = data;
         }
     }
 
-    printf("%.1f\n", s->input_offset);
-    s->input_offset += s->ratio * ((float)s->window_size * 0.5);
-    printf("%.1f\n", s->input_offset);
+    s->input_offset += (s->ratio * ((float)s->window_size * 0.5));
 }
 
 void add_output(struct stretch_data *s, float *buffers[]) {
@@ -102,7 +99,7 @@ void add_output(struct stretch_data *s, float *buffers[]) {
     s->output_size = N;
 
     for (i = 0; i < s->window_size; i++) {
-        j = (s->channels * i) + (int)s->output_offset;
+        j = s->channels * (i + (int)s->output_offset);
         for (k = 0; k < s->channels; k++) {
             data  = buffers[k][i];
         }
@@ -112,7 +109,7 @@ void add_output(struct stretch_data *s, float *buffers[]) {
 }
 
 
-void print_next_section (struct stretch_data *s) {
+void print_next_section(struct stretch_data *s) {
 
     int i,j;
     for (i = 0; i < s->window_size; i++) {
@@ -125,7 +122,7 @@ void print_next_section (struct stretch_data *s) {
 
 }
 
-void main () {
+void test_next_input_section() {
 
     int channels = 2;
     int samples  = 128;
@@ -153,5 +150,9 @@ void main () {
     next_input_section(&sdata);
     print_next_section(&sdata);
 
+    next_input_section(&sdata);
+    print_next_section(&sdata);
+
 }
+
 
