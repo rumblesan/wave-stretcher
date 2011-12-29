@@ -73,17 +73,27 @@ void test_add_output()
 
 struct fft_data {
 
-    int num_samples;
+    int window_size;
 
     float *window;
 
+    float *smps;
     float *data;
+    float *freq;
+
     fftwf_plan forward, inverse;
 
 };
 
-void setup_fft (struct fft_data *d, int N);
-
+void setup_fft (struct fft_data *d, int window_size);
+void copy_data(struct fft_data *f, short *data);
+void return_data(struct fft_data *f, short *data);
+void window_data(struct fft_data *f);
+void normalise_data(struct fft_data *f);
+void forward_fft(struct fft_data *f);
+void inverse_fft(struct fft_data *f);
+void pauls_algo(struct fft_data *f);
+void cleanup_fft(struct fft_data *f);
 
 
 
