@@ -59,6 +59,7 @@ void setup_stretch(struct stretch_data *s,
 
     /*
        create buffers. one for each channel
+       each needs to be "window_size" number of elements
     */
     for (i = 0; i < s->channels; i++) {
         s->buffers[i] = (float*) malloc(sizeof(float) * s->window_size);
@@ -198,4 +199,10 @@ void test_add_output() {
 
 }
 
+#ifdef TEST_SUITE
+void main () {
+    test_next_input_section();
+    test_add_output();
+}
+#endif
 
