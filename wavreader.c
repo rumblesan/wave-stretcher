@@ -1,7 +1,6 @@
-#include "main.h"
 #include <stdlib.h>
 #include <stdio.h>
-
+#include "main.h"
 
 
 void read_wav(char filename[], struct wavefiledata *wavedata) {
@@ -56,7 +55,6 @@ void write_wav(char filename[], struct wavefiledata *wavedata) {
     fwrite(&wavedata->SubChunk2ID,    sizeof(char),  4, fp);
     fwrite(&wavedata->SubChunk2Size,  sizeof(int),   1, fp);
 
-    printf("dataoutput size  %i\n", wavedata->SubChunk2Size);
     fwrite(wavedata->waveData,sizeof(char), wavedata->SubChunk2Size, fp);
 
     fclose (fp);
@@ -90,9 +88,11 @@ void main() {
 
     struct wavefiledata wavedata;
 
-    read_wav(&wavedata);
+    char infile[]  = "test.wav";
+    char outfile[] = "output.wav";
+    read_wav(infile, &wavedata);
     print_wav(&wavedata);
-    write_wav(&wavedata);
+    write_wav(outfile, &wavedata);
 }
 
 #endif
