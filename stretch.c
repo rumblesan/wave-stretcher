@@ -1,29 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-
-
-struct stretch_data {
-
-    float *input_data;
-    int    input_size;
-    float  input_offset;
-
-
-    float *output_data;
-    int    output_size;
-    int    output_offset;
-
-    int finished;
-
-    float ratio;
-
-    int channels;
-
-    int window_size;
-
-    float *buffers[];
-};
-
+#include "main.h"
 
 
 void setup_stretch(struct stretch_data *s,
@@ -66,6 +43,12 @@ void setup_stretch(struct stretch_data *s,
     }
 }
 
+/*
+   reads data from the input buffer,
+   splits it into seperate channels
+   fills the channel buffers
+   each is "window_size" long
+*/
 void next_input_section(struct stretch_data *s) {
 
     int i, j, k;

@@ -1,17 +1,7 @@
 #include <fftw3.h>
 #include <math.h>
 #include <stdlib.h>
-
-struct fft_data {
-
-    int num_samples;
-
-    float *window;
-
-    float *data;
-    fftwf_plan forward, inverse;
-
-};
+#include "main.h"
 
 
 void setup_fft (struct fft_data *d, int N) {
