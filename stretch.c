@@ -112,6 +112,7 @@ void add_output(struct stretch_data *s, float *buffers[]) {
 }
 
 
+#ifdef TEST_SUITE
 void print_next_section(struct stretch_data *s) {
 
     int i,j;
@@ -199,7 +200,6 @@ void test_add_output() {
 
 }
 
-#ifdef TEST_SUITE
 void main () {
     test_next_input_section();
     test_add_output();
