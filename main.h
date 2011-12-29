@@ -23,7 +23,8 @@ struct wavefiledata {
 
 };
 
-void read_wav(struct wavefiledata *wavedata);
+void read_wav(char filename[], struct wavefiledata *wavedata);
+void write_wav(char filename[], struct wavefiledata *wavedata);
 
 void print_wav(struct wavefiledata *wavedata);
 

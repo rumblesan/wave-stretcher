@@ -4,10 +4,10 @@
 
 
 
-void read_wav(struct wavefiledata *wavedata) {
+void read_wav(char filename[], struct wavefiledata *wavedata) {
 
     FILE *fp;
-    fp = fopen("test.wav", "r");
+    fp = fopen(filename, "r");
 
     fread(&wavedata->ChunkID,4, 1, fp);
     fread(&wavedata->ChunkDataSize,4, 1, fp);
@@ -32,6 +32,34 @@ void read_wav(struct wavefiledata *wavedata) {
     fclose (fp);
 }
 
+void write_wav(char filename[], struct wavefiledata *wavedata) {
+
+    FILE *fp;
+    fp = fopen(filename, "w");
+
+    fwrite(&wavedata->ChunkID,4, 1, fp);
+    fwrite(&wavedata->ChunkDataSize,4, 1, fp);
+    fwrite(&wavedata->RiffType,4, 1, fp);
+
+    fwrite(&wavedata->SubChunk1ID,4, 1, fp);
+    fwrite(&wavedata->SubChunk1Size,4, 1, fp);
+
+    fwrite(&wavedata->AudioFormat,2, 1, fp);
+    fwrite(&wavedata->NumberChannels,2, 1, fp);
+    fwrite(&wavedata->SampleRate,4, 1, fp);
+    fwrite(&wavedata->ByteRate,4, 1, fp);
+    fwrite(&wavedata->BlockAlign,2, 1, fp);
+    fwrite(&wavedata->BitsPerSample,2, 1, fp);
+
+    fwrite(&wavedata->SubChunk2ID,4, 1, fp);
+    fwrite(&wavedata->SubChunk2Size,4, 1, fp);
+
+    fwrite(wavedata->waveData,2, wavedata->SubChunk2Size, fp);
+
+    fclose (fp);
+}
+
+
 void print_wav(struct wavefiledata *wavedata) {
 
     printf("chunk ID         %.4s\n",wavedata->ChunkID);
@@ -52,4 +80,17 @@ void print_wav(struct wavefiledata *wavedata) {
     printf("subchunk2 size   %i\n",wavedata->SubChunk2Size);
 
 }
+
+#ifdef TEST_SUITE
+
+void main() {
+
+    struct wavefiledata wavedata;
+
+    read_wav(&wavedata);
+    print_wav(&wavedata);
+    write_wav(&wavedata);
+}
+
+#endif
 
