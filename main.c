@@ -6,10 +6,13 @@
 void main () {
 
     struct wavefiledata wavedata;
+    char infile[] = "test.wav";
+    char outfile[] = "output.wav";
 
-    read_wav(&wavedata);
+    read_wav(infile, &wavedata);
 
     print_wav(&wavedata);
+    write_wav(outfile, &wavedata);
 
 }
 
