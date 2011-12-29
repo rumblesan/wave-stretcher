@@ -9,25 +9,26 @@ void read_wav(char filename[], struct wavefiledata *wavedata) {
     FILE *fp;
     fp = fopen(filename, "r");
 
-    fread(&wavedata->ChunkID,4, 1, fp);
-    fread(&wavedata->ChunkDataSize,4, 1, fp);
-    fread(&wavedata->RiffType,4, 1, fp);
+    fread(&wavedata->ChunkID,        sizeof(char),  4, fp);
+    fread(&wavedata->ChunkDataSize,  sizeof(int),   1, fp);
+    fread(&wavedata->RiffType,       sizeof(char),  4, fp);
 
-    fread(&wavedata->SubChunk1ID,4, 1, fp);
-    fread(&wavedata->SubChunk1Size,4, 1, fp);
+    fread(&wavedata->SubChunk1ID,    sizeof(char),  4, fp);
+    fread(&wavedata->SubChunk1Size,  sizeof(int),   1, fp);
 
-    fread(&wavedata->AudioFormat,2, 1, fp);
-    fread(&wavedata->NumberChannels,2, 1, fp);
-    fread(&wavedata->SampleRate,4, 1, fp);
-    fread(&wavedata->ByteRate,4, 1, fp);
-    fread(&wavedata->BlockAlign,2, 1, fp);
-    fread(&wavedata->BitsPerSample,2, 1, fp);
+    fread(&wavedata->AudioFormat,    sizeof(short), 1, fp);
 
-    fread(&wavedata->SubChunk2ID,4, 1, fp);
-    fread(&wavedata->SubChunk2Size,4, 1, fp);
+    fread(&wavedata->NumberChannels, sizeof(short), 1, fp);
+    fread(&wavedata->SampleRate,     sizeof(int),   1, fp);
+    fread(&wavedata->ByteRate,       sizeof(int),   1, fp);
+    fread(&wavedata->BlockAlign,     sizeof(short), 1, fp);
+    fread(&wavedata->BitsPerSample,  sizeof(short), 1, fp);
 
-    wavedata->waveData = (short*)malloc(wavedata->SubChunk2Size);
-    fread(wavedata->waveData,2, wavedata->SubChunk2Size, fp);
+    fread(&wavedata->SubChunk2ID,    sizeof(char),  4, fp);
+    fread(&wavedata->SubChunk2Size,  sizeof(int),   1, fp);
+
+    wavedata->waveData = (short*)malloc(sizeof(char) * wavedata->SubChunk2Size);
+    fread(wavedata->waveData,sizeof(char), wavedata->SubChunk2Size, fp);
 
     fclose (fp);
 }
@@ -37,24 +38,26 @@ void write_wav(char filename[], struct wavefiledata *wavedata) {
     FILE *fp;
     fp = fopen(filename, "w");
 
-    fwrite(&wavedata->ChunkID,4, 1, fp);
-    fwrite(&wavedata->ChunkDataSize,4, 1, fp);
-    fwrite(&wavedata->RiffType,4, 1, fp);
+    fwrite(&wavedata->ChunkID,        sizeof(char),  4, fp);
+    fwrite(&wavedata->ChunkDataSize,  sizeof(int),   1, fp);
+    fwrite(&wavedata->RiffType,       sizeof(char),  4, fp);
 
-    fwrite(&wavedata->SubChunk1ID,4, 1, fp);
-    fwrite(&wavedata->SubChunk1Size,4, 1, fp);
+    fwrite(&wavedata->SubChunk1ID,    sizeof(char),  4, fp);
+    fwrite(&wavedata->SubChunk1Size,  sizeof(int),   1, fp);
 
-    fwrite(&wavedata->AudioFormat,2, 1, fp);
-    fwrite(&wavedata->NumberChannels,2, 1, fp);
-    fwrite(&wavedata->SampleRate,4, 1, fp);
-    fwrite(&wavedata->ByteRate,4, 1, fp);
-    fwrite(&wavedata->BlockAlign,2, 1, fp);
-    fwrite(&wavedata->BitsPerSample,2, 1, fp);
+    fwrite(&wavedata->AudioFormat,    sizeof(short), 1, fp);
 
-    fwrite(&wavedata->SubChunk2ID,4, 1, fp);
-    fwrite(&wavedata->SubChunk2Size,4, 1, fp);
+    fwrite(&wavedata->NumberChannels, sizeof(short), 1, fp);
+    fwrite(&wavedata->SampleRate,     sizeof(int),   1, fp);
+    fwrite(&wavedata->ByteRate,       sizeof(int),   1, fp);
+    fwrite(&wavedata->BlockAlign,     sizeof(short), 1, fp);
+    fwrite(&wavedata->BitsPerSample,  sizeof(short), 1, fp);
 
-    fwrite(wavedata->waveData,2, wavedata->SubChunk2Size, fp);
+    fwrite(&wavedata->SubChunk2ID,    sizeof(char),  4, fp);
+    fwrite(&wavedata->SubChunk2Size,  sizeof(int),   1, fp);
+
+    printf("dataoutput size  %i\n", wavedata->SubChunk2Size);
+    fwrite(wavedata->waveData,sizeof(char), wavedata->SubChunk2Size, fp);
 
     fclose (fp);
 }
