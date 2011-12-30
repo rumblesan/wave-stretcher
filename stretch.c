@@ -18,6 +18,8 @@ void setup_stretch(struct stretch_data *s,
     s->input_frames = frames;
     s->input_offset = 0.0;
 
+    s->finished     = 0;
+
 
     /*
        creating initial output buffer
@@ -58,7 +60,12 @@ void next_input_section(struct stretch_data *s) {
     for (i = 0; i < s->window_size; i++) {
         j = s->channels * (i + (int)s->input_offset);
         for (k = 0; k < s->channels; k++) {
-            data  = s->input_data[j+k];
+            if ((i + (int)s->input_offset) >= s->input_frames) {
+                data = 0.0;
+                s->finished = 1;
+            } else {
+                data = s->input_data[j+k];
+            }
             s->buffers[k][i] = data;
         }
     }
@@ -182,9 +189,43 @@ void test_add_output() {
 
 }
 
+void test_finish() {
+
+    int channels = 2;
+    int frames  = 14;
+    int datasize = channels * frames;
+    int window_size = 8;
+    float ratio = 1.0;
+
+    float *wdata;
+    wdata = (float*) malloc(sizeof(float) * datasize);
+
+    int i,j,k;
+    for (i = 0; i < frames; i++) {
+        j = (i * channels);
+        for (k = 0; k < channels; k++) {
+            wdata[j+k] = (float)i + ((float)k/10);
+        }
+    }
+
+    struct stretch_data sdata;
+    setup_stretch(&sdata, wdata, frames, channels, window_size, ratio);
+
+    printf("finished %i\n", sdata.finished);
+
+    while (sdata.finished != 1) {
+        next_input_section(&sdata);
+        print_next_section(&sdata);
+    }
+
+    printf("finished %i\n", sdata.finished);
+
+}
+
 void main () {
     test_next_input_section();
     test_add_output();
+    test_finish();
 }
 #endif
 

@@ -30,6 +30,8 @@ struct stretch_data {
 
     int channels;
 
+    int finished;
+
     int window_size;
 
     float *buffers[];
