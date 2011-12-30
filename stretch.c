@@ -222,10 +222,44 @@ void test_finish() {
 
 }
 
+void test_stretch() {
+
+    int channels = 2;
+    int frames  = 14;
+    int datasize = channels * frames;
+    int window_size = 8;
+    float ratio = 0.8;
+
+    float *wdata;
+    wdata = (float*) malloc(sizeof(float) * datasize);
+
+    int i,j,k;
+    for (i = 0; i < frames; i++) {
+        j = (i * channels);
+        for (k = 0; k < channels; k++) {
+            wdata[j+k] = (float)i + ((float)k/10);
+        }
+    }
+
+    struct stretch_data sdata;
+    setup_stretch(&sdata, wdata, frames, channels, window_size, ratio);
+
+    printf("finished %i\n", sdata.finished);
+
+    while (sdata.finished != 1) {
+        next_input_section(&sdata);
+        print_next_section(&sdata);
+    }
+
+    printf("finished %i\n", sdata.finished);
+
+}
+
 void main () {
-    test_next_input_section();
-    test_add_output();
-    test_finish();
+//    test_next_input_section();
+//    test_add_output();
+//    test_finish();
+    test_stretch();
 }
 #endif
 
