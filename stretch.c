@@ -25,10 +25,13 @@ void setup_stretch(struct stretch_data *s,
        channels * (window_size / 2)
     */
     s->output_frames = s->window_size / 2;
-    s->output_data   = (float*) malloc(sizeof(float) * s->output_frames * s->channels);
     s->output_offset = 0;
+
+    int buffer_size = s->output_frames * s->channels;
     int i;
-    for (i = 0; i < (s->channels * s->output_frames); i++) {
+
+    s->output_data   = (float*) malloc(sizeof(float) * buffer_size);
+    for (i = 0; i < buffer_size; i++) {
         s->output_data[i] = 0;
     }
 
@@ -65,7 +68,8 @@ void next_input_section(struct stretch_data *s) {
 
 void add_output(struct stretch_data *s) {
 
-    int i, j, k, N;
+    int i, j, k;
+    int buffer_size;
     float data;
 
     /*
@@ -73,9 +77,9 @@ void add_output(struct stretch_data *s) {
        buffer by half a windowsize for each channel
    */
 
-    N = s->channels * (s->output_frames + (s->window_size / 2));
-    s->output_data = (float*) realloc(s->output_data, sizeof(float) * N);
-    for (i = (s->channels * s->output_frames); i < N; i++) {
+    buffer_size = s->channels * (s->output_frames + (s->window_size / 2));
+    s->output_data = (float*) realloc(s->output_data, sizeof(float) * buffer_size);
+    for (i = (s->channels * s->output_frames); i < buffer_size; i++) {
         s->output_data[i] = 0;
     }
     s->output_frames += (s->window_size / 2);
