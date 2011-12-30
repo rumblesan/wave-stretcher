@@ -57,6 +57,7 @@ void test_add_output();
 struct fft_data {
 
     int window_size;
+    int rand_seed;
 
     float *window;
 
@@ -69,13 +70,12 @@ struct fft_data {
 };
 
 void setup_fft (struct fft_data *d, int window_size);
-void copy_data(struct fft_data *f, float *data);
+void get_data(struct fft_data *f, float *data);
 void return_data(struct fft_data *f, float *data);
 void window_data(struct fft_data *f);
 void normalise_data(struct fft_data *f);
-void forward_fft(struct fft_data *f);
-void inverse_fft(struct fft_data *f);
-void pauls_algo(struct fft_data *f);
+void freq_to_samp(struct fft_data *f);
+void samp_to_freq(struct fft_data *f);
 void cleanup_fft(struct fft_data *f);
 
 
