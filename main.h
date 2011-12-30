@@ -18,12 +18,12 @@ void print_wav(struct audio_file *af);
 struct stretch_data {
 
     float *input_data;
-    int    input_size;
+    int    input_frames;
     float  input_offset;
 
 
     float *output_data;
-    int    output_size;
+    int    output_frames;
     int    output_offset;
 
     int finished;
@@ -45,7 +45,7 @@ void setup_stretch(struct stretch_data *s,
                    float ratio);
 
 void next_input_section(struct stretch_data *s);
-void add_output(struct stretch_data *s, float *buffers[]);
+void add_output(struct stretch_data *s);
 
 #ifdef TEST_SUITE
 void print_next_section(struct stretch_data *s);
