@@ -1,32 +1,17 @@
 #include <fftw3.h>
+#include <stdio.h>
+#include <sndfile.h>
 
-struct wavefiledata {
-
-	char ChunkID[4];
-	int ChunkDataSize;
-	char RiffType[4];
-
-	char SubChunk1ID[4];
-	int SubChunk1Size;
-	short AudioFormat;
-
-	short NumberChannels;
-	int SampleRate;
-	int ByteRate;
-	short BlockAlign;
-	short BitsPerSample;
-
-	char SubChunk2ID[4];
-	int SubChunk2Size;
-
-	short *waveData;
-
+struct audio_file {
+    SNDFILE *sf;
+    char *filename;
+    SF_INFO info;
+    float *sound_data;
 };
 
-void read_wav(char filename[], struct wavefiledata *wavedata);
-void write_wav(char filename[], struct wavefiledata *wavedata);
-
-void print_wav(struct wavefiledata *wavedata);
+void read_wav(struct audio_file *af);
+void write_wav(struct audio_file *af);
+void print_wav(struct audio_file *af);
 
 
 

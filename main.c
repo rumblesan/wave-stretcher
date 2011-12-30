@@ -5,14 +5,15 @@
 
 void main () {
 
-    struct wavefiledata wavedata;
-    char infile[] = "test.wav";
-    char outfile[] = "output.wav";
+    struct audio_file af;
+    af.filename = "test.wav";
 
-    read_wav(infile, &wavedata);
+    read_wav(&af);
 
-    print_wav(&wavedata);
-    write_wav(outfile, &wavedata);
+    print_wav(&af);
+
+    af.filename = "output.wav";
+    write_wav(&af);
 
 }
 

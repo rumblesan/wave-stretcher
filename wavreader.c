@@ -1,99 +1,60 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <sndfile.h>
 #include "main.h"
 
 
-void read_wav(char filename[], struct wavefiledata *wavedata) {
+void read_wav(struct audio_file *af) {
 
-    FILE *fp;
-    fp = fopen(filename, "r");
+    af->info.format = 0;
+    af->sf = sf_open(af->filename, SFM_READ, &af->info);
 
-    fread(&wavedata->ChunkID,        sizeof(char),  4, fp);
-    fread(&wavedata->ChunkDataSize,  sizeof(int),   1, fp);
-    fread(&wavedata->RiffType,       sizeof(char),  4, fp);
-
-    fread(&wavedata->SubChunk1ID,    sizeof(char),  4, fp);
-    fread(&wavedata->SubChunk1Size,  sizeof(int),   1, fp);
-
-    fread(&wavedata->AudioFormat,    sizeof(short), 1, fp);
-
-    fread(&wavedata->NumberChannels, sizeof(short), 1, fp);
-    fread(&wavedata->SampleRate,     sizeof(int),   1, fp);
-    fread(&wavedata->ByteRate,       sizeof(int),   1, fp);
-    fread(&wavedata->BlockAlign,     sizeof(short), 1, fp);
-    fread(&wavedata->BitsPerSample,  sizeof(short), 1, fp);
-
-    fread(&wavedata->SubChunk2ID,    sizeof(char),  4, fp);
-    fread(&wavedata->SubChunk2Size,  sizeof(int),   1, fp);
-
-    wavedata->waveData = (short*)malloc(sizeof(char) * wavedata->SubChunk2Size);
-    fread(wavedata->waveData,sizeof(char), wavedata->SubChunk2Size, fp);
-
-    fclose (fp);
-}
-
-void write_wav(char filename[], struct wavefiledata *wavedata) {
-
-    FILE *fp;
-    fp = fopen(filename, "w");
-
-    fwrite(&wavedata->ChunkID,        sizeof(char),  4, fp);
-    fwrite(&wavedata->ChunkDataSize,  sizeof(int),   1, fp);
-    fwrite(&wavedata->RiffType,       sizeof(char),  4, fp);
-
-    fwrite(&wavedata->SubChunk1ID,    sizeof(char),  4, fp);
-    fwrite(&wavedata->SubChunk1Size,  sizeof(int),   1, fp);
-
-    fwrite(&wavedata->AudioFormat,    sizeof(short), 1, fp);
-
-    fwrite(&wavedata->NumberChannels, sizeof(short), 1, fp);
-    fwrite(&wavedata->SampleRate,     sizeof(int),   1, fp);
-    fwrite(&wavedata->ByteRate,       sizeof(int),   1, fp);
-    fwrite(&wavedata->BlockAlign,     sizeof(short), 1, fp);
-    fwrite(&wavedata->BitsPerSample,  sizeof(short), 1, fp);
-
-    fwrite(&wavedata->SubChunk2ID,    sizeof(char),  4, fp);
-    fwrite(&wavedata->SubChunk2Size,  sizeof(int),   1, fp);
-
-    fwrite(wavedata->waveData,sizeof(char), wavedata->SubChunk2Size, fp);
-
-    fclose (fp);
-}
-
-
-void print_wav(struct wavefiledata *wavedata) {
-
-    printf("chunk ID         %.4s\n",wavedata->ChunkID);
-    printf("chunk data size  %i\n",wavedata->ChunkDataSize);
-    printf("riff type        %.4s\n",wavedata->RiffType);
-
-    printf("subchunk1 id     %.4s\n",wavedata->SubChunk1ID);
-    printf("subchunk1 size   %i\n",wavedata->SubChunk1Size);
-    printf("audio format     %i\n",wavedata->AudioFormat);
-
-    printf("channels         %i\n",wavedata->NumberChannels);
-    printf("samplerate       %i\n",wavedata->SampleRate);
-    printf("byterate         %i\n",wavedata->ByteRate);
-    printf("block align      %i\n",wavedata->BlockAlign);
-    printf("bits per sample  %i\n",wavedata->BitsPerSample);
-
-    printf("subchunk2 id     %.4s\n",wavedata->SubChunk2ID);
-    printf("subchunk2 size   %i\n",wavedata->SubChunk2Size);
+    af->sound_data = (float*) malloc(sizeof(float) * af->info.channels * (int)af->info.frames);
+    sf_readf_float(af->sf, af->sound_data, af->info.frames);
 
 }
 
-#ifdef TEST_SUITE
+void free_wav(struct audio_file *af) {
 
+    free(af->sound_data);
+    sf_close(af->sf);
+}
+
+void write_wav(struct audio_file *af) {
+
+    SNDFILE *of = sf_open(af->filename, SFM_WRITE, &af->info);
+    sf_writef_float(of, af->sound_data, af->info.frames);
+    sf_close(of);
+}
+
+void print_wav(struct audio_file *af) {
+
+    printf("%i frames\n", (int)af->info.frames);
+    printf("%i samplerate\n", af->info.samplerate);
+    printf("%i channels\n", af->info.channels);
+    printf("%i format\n", af->info.format);
+    printf("%i sections\n", af->info.sections);
+    printf("%i seekable\n", af->info.seekable);
+
+}
+
+#ifdef WAV_TEST
 void main() {
 
-    struct wavefiledata wavedata;
+    struct audio_file af;
+    af.filename = "test.wav";
+    read_wav(&af);
+    print_wav(&af);
+    af.filename = "output.wav";
+    write_wav(&af);
 
-    char infile[]  = "test.wav";
-    char outfile[] = "output.wav";
-    read_wav(infile, &wavedata);
-    print_wav(&wavedata);
-    write_wav(outfile, &wavedata);
+    /*
+    int i;
+    for (i = 0; i < 2000; i++) {
+        printf("%f\n", af.sound_data[i]);
+    }
+    */
 }
-
 #endif
+
 
