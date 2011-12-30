@@ -26,8 +26,6 @@ struct stretch_data {
     int    output_frames;
     int    output_offset;
 
-    int finished;
-
     float ratio;
 
     int channels;
@@ -39,9 +37,9 @@ struct stretch_data {
 
 void setup_stretch(struct stretch_data *s,
                    float *wavdata,
-                   int input_size,
-                   int window_size,
+                   int frames,
                    int channels,
+                   int window_size,
                    float ratio);
 
 void next_input_section(struct stretch_data *s);
@@ -71,8 +69,8 @@ struct fft_data {
 };
 
 void setup_fft (struct fft_data *d, int window_size);
-void copy_data(struct fft_data *f, short *data);
-void return_data(struct fft_data *f, short *data);
+void copy_data(struct fft_data *f, float *data);
+void return_data(struct fft_data *f, float *data);
 void window_data(struct fft_data *f);
 void normalise_data(struct fft_data *f);
 void forward_fft(struct fft_data *f);
