@@ -23,18 +23,17 @@ void setup_fft (struct fft_data *f, int window_size) {
     }
 }
 
-void get_data(struct fft_data *f, short *data) {
+void get_data(struct fft_data *f, float *data) {
     int i;
-    float scale = (1.0/32768.0);
     for (i = 0; i < f->window_size; i++) {
-        f->smps[i] = ((float)data[i] * scale);
+        f->smps[i] = data[i];
     }
 }
 
-void return_data(struct fft_data *f, short *data) {
+void return_data(struct fft_data *f, float *data) {
     int i;
     for (i = 0; i < f->window_size; i++) {
-        data[i] = (short)(f->smps[i] * 32768.0);
+        data[i] = f->smps[i];
     }
 }
 
