@@ -11,7 +11,7 @@ void main () {
     read_wav(&af);
 
     int window_size = 1024;
-    float ratio = 0.2;
+    float ratio = 0.95;
     struct stretch_data sdata;
     setup_stretch(&sdata,
                   af.sound_data,
@@ -37,10 +37,11 @@ void main () {
 
     struct audio_file of;
     of.filename        = "output.wav";
-    of.sf              = af.sf;
+    of.sound_data      = sdata.output_data;
     of.info.samplerate = af.info.samplerate;
     of.info.channels   = af.info.channels;
     of.info.format     = af.info.format;
+    of.info.frames     = sdata.output_frames;
 
     write_wav(&of);
 

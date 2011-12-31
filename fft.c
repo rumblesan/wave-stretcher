@@ -72,7 +72,7 @@ void freq_to_samp(struct fft_data *f) {
     f->data[f->window_size/2] = 0.0;
 
     fftwf_execute(f->inverse);
-    normalise_data(f);
+    //normalise_data(f);
     window_data(f);
 }
 
