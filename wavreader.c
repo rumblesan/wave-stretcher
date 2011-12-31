@@ -22,9 +22,14 @@ void free_wav(struct audio_file *af) {
 
 void write_wav(struct audio_file *af) {
 
-    SNDFILE *of = sf_open(af->filename, SFM_WRITE, &af->info);
-    sf_writef_float(of, af->sound_data, af->info.frames);
-    sf_close(of);
+    sf_count_t frame_num = af->info.frames;
+    af->sf = sf_open(af->filename, SFM_WRITE, &af->info);
+    if (af->sf == NULL) {
+        printf("ERROR OPENING\n");
+    } else {
+        sf_writef_float(af->sf, af->sound_data, frame_num);
+        sf_close(af->sf);
+    }
 }
 
 void print_wav(struct audio_file *af) {
