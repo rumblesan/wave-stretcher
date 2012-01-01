@@ -71,6 +71,7 @@ void main (int argc, char *argv[]) {
         for (i = 0; i < af.info.channels; i++) {
             get_data(&fft, sdata.buffers[i]);
             samp_to_freq(&fft);
+            pauls_algo(&fft);
             freq_to_samp(&fft);
             return_data(&fft, sdata.buffers[i]);
         }
