@@ -55,14 +55,6 @@ void setup_stretch(struct stretch_data *s,
 void next_input_section(struct stretch_data *s);
 void add_output(struct stretch_data *s);
 
-#ifdef STRETCH_TEST
-void print_next_section(struct stretch_data *s);
-void print_output(struct stretch_data *s);
-void test_next_input_section();
-void test_add_output();
-#endif
-
-
 
 struct fft_data {
 

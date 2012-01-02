@@ -43,23 +43,3 @@ void print_wav(struct audio_file *af) {
 
 }
 
-#ifdef WAV_TEST
-void main() {
-
-    struct audio_file af;
-    af.filename = "test.wav";
-    read_wav(&af);
-    print_wav(&af);
-    af.filename = "output.wav";
-    write_wav(&af);
-
-    /*
-    int i;
-    for (i = 0; i < 2000; i++) {
-        printf("%f\n", af.sound_data[i]);
-    }
-    */
-}
-#endif
-
-
