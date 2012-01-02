@@ -22,7 +22,7 @@ void setup_fft (struct fft_data *f, int window_size) {
 
     int i;
     for (i = 0; i < f->window_size; i++) {
-        f->window[i] = 0.5 * (1.0 - cos(2 * M_PI * i / (f->window_size-1.0)) );
+        f->window[i] = pow(1.0-pow((i*(2.0/(float)f->window_size)-1.0),2.0),1.25);
     }
 }
 
