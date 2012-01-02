@@ -56,29 +56,4 @@ void next_input_section(struct stretch_data *s);
 void add_output(struct stretch_data *s);
 
 
-struct fft_data {
-
-    int window_size;
-    int rand_seed;
-
-    float *window;
-
-    float *smps;
-    float *data;
-    float *freq;
-
-    fftwf_plan forward, inverse;
-
-};
-
-void setup_fft (struct fft_data *d, int window_size);
-void get_data(struct fft_data *f, float *data);
-void return_data(struct fft_data *f, float *data);
-void window_data(struct fft_data *f);
-void normalise_data(struct fft_data *f);
-void freq_to_samp(struct fft_data *f);
-void samp_to_freq(struct fft_data *f);
-void cleanup_fft(struct fft_data *f);
-
-
 

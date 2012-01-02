@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "main.h"
+#include "fft.h"
 
 struct input_args parse_args(int argc, char *argv[]) {
 
@@ -62,18 +63,17 @@ void main (int argc, char *argv[]) {
                   window_size,
                   ratio);
 
-    struct fft_data fft;
-    setup_fft(&fft, window_size);
+    FFT fft = create_FFT(window_size);
 
     int i;
     while (sdata.finished != 1) {
         next_input_section(&sdata);
         for (i = 0; i < af.info.channels; i++) {
-            get_data(&fft, sdata.buffers[i]);
-            samp_to_freq(&fft);
-            pauls_algo(&fft);
-            freq_to_samp(&fft);
-            return_data(&fft, sdata.buffers[i]);
+            get_data(fft, sdata.buffers[i]);
+            samp_to_freq(fft);
+            pauls_algo(fft);
+            freq_to_samp(fft);
+            return_data(fft, sdata.buffers[i]);
         }
         add_output(&sdata);
     }
@@ -88,7 +88,7 @@ void main (int argc, char *argv[]) {
 
     write_wav(&of);
 
-    cleanup_fft(&fft);
+    cleanup_fft(fft);
     free_wav(&af);
 
 }

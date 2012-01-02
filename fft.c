@@ -1,11 +1,12 @@
 #include <fftw3.h>
 #include <math.h>
 #include <stdlib.h>
-#include "main.h"
+#include "fft.h"
 
 
-void setup_fft (struct fft_data *f, int window_size) {
+FFT create_FFT (int window_size) {
 
+    FFT f = (FFT) malloc(sizeof(FFT_Data));
     f->window_size = window_size;
     f->rand_seed   = 1;
     f->rand_seed  += 161103;
@@ -24,37 +25,39 @@ void setup_fft (struct fft_data *f, int window_size) {
     for (i = 0; i < f->window_size; i++) {
         f->window[i] = pow(1.0-pow((i*(2.0/(float)f->window_size)-1.0),2.0),1.25);
     }
+
+    return f;
 }
 
-void get_data(struct fft_data *f, float *input) {
+void get_data(FFT f, float *input) {
     int i;
     for (i = 0; i < f->window_size; i++) {
         f->smps[i] = input[i];
     }
 }
 
-void return_data(struct fft_data *f, float *output) {
+void return_data(FFT f, float *output) {
     int i;
     for (i = 0; i < f->window_size; i++) {
         output[i] = f->smps[i];
     }
 }
 
-void window_data(struct fft_data *f) {
+void window_data(FFT f) {
     int i;
     for (i = 0; i < f->window_size; i++) {
         f->smps[i] *= f->window[i];
     }
 }
 
-void normalise_data(struct fft_data *f) {
+void normalise_data(FFT f) {
     int i;
     for (i = 0; i < f->window_size; i++) {
         f->smps[i] /= f->window_size;
     }
 }
 
-void samp_to_freq(struct fft_data *f) {
+void samp_to_freq(FFT f) {
 
     window_data(f);
 
@@ -75,7 +78,7 @@ void samp_to_freq(struct fft_data *f) {
 
 }
 
-void pauls_algo(struct fft_data *f) {
+void pauls_algo(FFT f) {
 
     int i;
     float inv_2p15_2pi=1.0/16384.0*M_PI;
@@ -96,7 +99,7 @@ void pauls_algo(struct fft_data *f) {
 
 }
 
-void freq_to_samp(struct fft_data *f) {
+void freq_to_samp(FFT f) {
 
     fftwf_execute(f->inverse);
 
@@ -110,12 +113,17 @@ void freq_to_samp(struct fft_data *f) {
 
 }
 
-void cleanup_fft (struct fft_data *f) {
+void cleanup_fft (FFT f) {
 
     fftwf_destroy_plan(f->forward);
     fftwf_destroy_plan(f->inverse);
 
-    fftwf_free(f->window);
+    free(f->window);
+    fftwf_free(f->smps);
+    fftwf_free(f->data);
+    fftwf_free(f->freq);
+
+    free(f);
 
 }
 
