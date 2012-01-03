@@ -1,4 +1,6 @@
-#include <fftw3.h>
+#ifndef MAIN_H
+#define MAIN_H
+
 #include <stdio.h>
 #include <sndfile.h>
 
@@ -21,6 +23,4 @@ void read_wav(struct audio_file *af);
 void write_wav(struct audio_file *af);
 void print_wav(struct audio_file *af);
 
-
-
-
+#endif

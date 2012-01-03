@@ -1,6 +1,7 @@
-
 #ifndef FFT_H
 #define FFT_H
+
+#include <fftw3.h>
 
 typedef struct fft_data *FFT;
 
@@ -29,4 +30,3 @@ void samp_to_freq(FFT f);
 void cleanup_fft(FFT f);
 
 #endif
-
