@@ -4,6 +4,7 @@
 #include "main.h"
 #include "fft.h"
 #include "stretch.h"
+#include "wavreader.h"
 
 struct input_args parse_args(int argc, char *argv[]) {
 

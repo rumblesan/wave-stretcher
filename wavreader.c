@@ -1,7 +1,6 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <sndfile.h>
-#include "main.h"
+#include "wavreader.h"
 
 
 void read_wav(struct audio_file *af) {
@@ -30,16 +29,5 @@ void write_wav(struct audio_file *af) {
         sf_writef_float(af->sf, af->sound_data, frame_num);
         sf_close(af->sf);
     }
-}
-
-void print_wav(struct audio_file *af) {
-
-    printf("%i frames\n", (int)af->info.frames);
-    printf("%i samplerate\n", af->info.samplerate);
-    printf("%i channels\n", af->info.channels);
-    printf("%i format\n", af->info.format);
-    printf("%i sections\n", af->info.sections);
-    printf("%i seekable\n", af->info.seekable);
-
 }
 
