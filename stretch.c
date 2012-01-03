@@ -40,6 +40,7 @@ void setup_stretch(Stretch s,
        create buffers. one for each channel
        each needs to be "window_size" number of elements
     */
+    s->buffers = (float**) malloc(sizeof(float*) * s->channels);
     for (i = 0; i < s->channels; i++) {
         s->buffers[i] = (float*) malloc(sizeof(float) * s->window_size);
     }
@@ -59,7 +60,7 @@ void next_input_section(Stretch s) {
     for (i = 0; i < s->window_size; i++) {
         j = s->channels * (i + (int)s->input_offset);
         for (k = 0; k < s->channels; k++) {
-            if ((i + (int)s->input_offset) >= s->input_frames) {
+            if ((i + k + (int)s->input_offset) >= s->input_frames) {
                 data = 0.0;
                 s->finished = 1;
             } else {

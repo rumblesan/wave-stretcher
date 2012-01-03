@@ -22,7 +22,7 @@ typedef struct stretch_data {
 
     int window_size;
 
-    float *buffers[];
+    float **buffers;
 } Stretch_Data;
 
 void setup_stretch(Stretch s,
