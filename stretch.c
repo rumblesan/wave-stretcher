@@ -1,16 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "main.h"
-#include "stretch.h"
 
 
-Stretch create_stretch(float *wavdata,
-                       int frames,
-                       int channels,
-                       int window_size,
-                       float ratio) {
+void setup_stretch(struct stretch_data *s,
+                   float *wavdata,
+                   int frames,
+                   int channels,
+                   int window_size,
+                   float ratio) {
 
-    Stretch s = (Stretch) malloc(sizeof(Stretch_Data));
     s->window_size  = window_size;
     s->channels     = channels;
     s->ratio        = ratio;
@@ -45,7 +44,6 @@ Stretch create_stretch(float *wavdata,
     for (i = 0; i < s->channels; i++) {
         s->buffers[i] = (float*) malloc(sizeof(float) * s->window_size);
     }
-    return s;
 }
 
 /*
@@ -54,7 +52,7 @@ Stretch create_stretch(float *wavdata,
    fills the channel buffers
    each is "window_size" long
 */
-void next_input_section(Stretch s) {
+void next_input_section(struct stretch_data *s) {
 
     int i, j, k;
     float data;
@@ -75,7 +73,7 @@ void next_input_section(Stretch s) {
     s->input_offset += s->ratio * ((float)s->window_size * 0.5);
 }
 
-void add_output(Stretch s) {
+void add_output(struct stretch_data *s) {
 
     int i, j, k;
     int buffer_size;
@@ -101,18 +99,5 @@ void add_output(Stretch s) {
         }
     }
     s->output_offset += (s->window_size / 2);
-}
-
-void cleanup_stretch(Stretch s) {
-
-    free(s->output_data);
-
-    int i;
-    for (i = 0; i < s->channels; i++) {
-        free(s->buffers[i]);
-    }
-    free(s->buffers);
-
-    free(s);
 }
 
