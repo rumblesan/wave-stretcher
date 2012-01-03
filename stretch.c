@@ -7,12 +7,13 @@ Stretch create_stretch(float *wavdata,
                        int frames,
                        int channels,
                        int window_size,
-                       float ratio) {
+                       float stretch) {
 
     Stretch s = (Stretch) malloc(sizeof(Stretch_Data));
     s->window_size  = window_size;
     s->channels     = channels;
-    s->ratio        = ratio;
+    s->stretch      = stretch;
+    s->speed        = 1.0/stretch;
 
     s->input_data   = wavdata;
     s->input_frames = frames;
@@ -72,7 +73,7 @@ void next_input_section(Stretch s) {
         }
     }
 
-    s->input_offset += s->ratio * ((float)s->window_size * 0.5);
+    s->input_offset += s->speed * ((float)s->window_size * 0.5);
 }
 
 void add_output(Stretch s) {

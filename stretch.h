@@ -14,7 +14,8 @@ typedef struct stretch_data {
     int    output_frames;
     int    output_offset;
 
-    float ratio;
+    float stretch;
+    float speed;
 
     int channels;
 

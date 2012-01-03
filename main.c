@@ -1,47 +1,61 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <unistd.h>
 #include "main.h"
 #include "fft.h"
 #include "stretch.h"
 #include "wavreader.h"
 
+void usage(int exitval) {
+    printf("Wave Stretch usage:\n");
+    printf("wavstretch -i inputfile -o outputfile [-w WINDOW] [-s STRETCH]\n");
+    printf("            WINDOW defaults to 2048\n");
+    printf("           STRETCH defaults to 5\n");
+    exit(exitval);
+}
+
 struct input_args parse_args(int argc, char *argv[]) {
 
-    struct input_args args;
-    int i;
-    int ifile,ofile,win,spd;
+    struct input_args args = {"","",2048,5};
 
-    for (i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-i") == 0) {
-            args.input_file = argv[i+1];
-            ifile = 1;
-            printf("input file  : %s\n",args.input_file);
-        } else if (strcmp(argv[i], "-o") == 0) {
-            args.output_file = argv[i+1];
-            ofile = 1;
-            printf("output file : %s\n",args.output_file);
-        } else if (strcmp(argv[i], "-s") == 0) {
-            args.speed_ratio = (float)atof(argv[i+1]);
-            printf("speed ratio : %f\n",args.speed_ratio);
-            spd = 1;
-        } else if (strcmp(argv[i], "-w") == 0) {
-            win = 1;
-            int window = atoi(argv[i+1]);
-            if (window%2 != 0) {
-                printf("window size needs to be divisible by 2\n");
-                window += 1;
-                printf("increasing it to %i\n", window);
-            }
-            args.window_size = window;
-            printf("window size : %i\n",args.window_size);
+    int c;
+    while ( (c = getopt(argc, argv, "i:o:s:w:h")) != -1) {
+        switch (c)
+        {
+            case 'i':
+                args.input_file = optarg;
+                break;
+            case 'o':
+                args.output_file = optarg;
+                break;
+            case 'w':
+                args.window_size = atoi(optarg);
+                break;
+            case 's':
+                args.stretch = atof(optarg);
+                break;
+            case 'h':
+                usage(0);
+                break;
         }
     }
 
-    if ((ifile+ofile+win+spd) != 4) {
-        printf("Didnt give all args. Exiting!!");
-        exit(1);
+    if (*args.input_file == '\0') {
+        printf("Need to specify an input file\n");
+        usage(1);
+    } else {
+        printf("Stretching %s\n", args.input_file);
     }
+
+    if (*args.output_file == '\0') {
+        printf("Need to specify an output file\n");
+        usage(1);
+    } else {
+        printf("Writing to %s\n", args.output_file);
+    }
+
+    printf("Using a window of %i samples\n", args.window_size);
+    printf("Stretching by %.3f times\n", args.stretch);
 
     return args;
 }
@@ -55,15 +69,13 @@ void main (int argc, char *argv[]) {
 
     read_wav(&af);
 
-    int window_size = args.window_size;
-    float ratio = args.speed_ratio;
     Stretch stretch = create_stretch(af.sound_data,
                                      af.info.frames,
                                      af.info.channels,
-                                     window_size,
-                                     ratio);
+                                     args.window_size,
+                                     args.stretch);
 
-    FFT fft = create_FFT(window_size);
+    FFT fft = create_FFT(args.window_size);
 
     int i;
     while (stretch->finished != 1) {
