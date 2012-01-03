@@ -3,6 +3,7 @@
 #include <string.h>
 #include "main.h"
 #include "fft.h"
+#include "stretch.h"
 
 struct input_args parse_args(int argc, char *argv[]) {
 
@@ -55,40 +56,40 @@ void main (int argc, char *argv[]) {
 
     int window_size = args.window_size;
     float ratio = args.speed_ratio;
-    struct stretch_data sdata;
-    setup_stretch(&sdata,
-                  af.sound_data,
-                  af.info.frames,
-                  af.info.channels,
-                  window_size,
-                  ratio);
+
+    Stretch stretch = create_stretch(af.sound_data,
+                                     af.info.frames,
+                                     af.info.channels,
+                                     window_size,
+                                     ratio);
 
     FFT fft = create_FFT(window_size);
 
     int i;
-    while (sdata.finished != 1) {
-        next_input_section(&sdata);
+    while (stretch->finished != 1) {
+        next_input_section(stretch);
         for (i = 0; i < af.info.channels; i++) {
-            get_data(fft, sdata.buffers[i]);
+            get_data(fft, stretch->buffers[i]);
             samp_to_freq(fft);
             pauls_algo(fft);
             freq_to_samp(fft);
-            return_data(fft, sdata.buffers[i]);
+            return_data(fft, stretch->buffers[i]);
         }
-        add_output(&sdata);
+        add_output(stretch);
     }
 
     struct audio_file of;
     of.filename        = args.output_file;
-    of.sound_data      = sdata.output_data;
+    of.sound_data      = stretch->output_data;
     of.info.samplerate = af.info.samplerate;
     of.info.channels   = af.info.channels;
     of.info.format     = af.info.format;
-    of.info.frames     = sdata.output_frames;
+    of.info.frames     = stretch->output_frames;
 
     write_wav(&of);
 
     cleanup_fft(fft);
+    cleanup_stretch(stretch);
     free_wav(&af);
 
 }
