@@ -1,9 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "main.h"
+#include "stretch.h"
 
-
-void setup_stretch(struct stretch_data *s,
+void setup_stretch(Stretch s,
                    float *wavdata,
                    int frames,
                    int channels,
@@ -52,7 +51,7 @@ void setup_stretch(struct stretch_data *s,
    fills the channel buffers
    each is "window_size" long
 */
-void next_input_section(struct stretch_data *s) {
+void next_input_section(Stretch s) {
 
     int i, j, k;
     float data;
@@ -73,7 +72,7 @@ void next_input_section(struct stretch_data *s) {
     s->input_offset += s->ratio * ((float)s->window_size * 0.5);
 }
 
-void add_output(struct stretch_data *s) {
+void add_output(Stretch s) {
 
     int i, j, k;
     int buffer_size;
