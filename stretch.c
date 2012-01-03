@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "stretch.h"
 
+
 Stretch create_stretch(float *wavdata,
                        int frames,
                        int channels,
@@ -100,5 +101,18 @@ void add_output(Stretch s) {
         }
     }
     s->output_offset += (s->window_size / 2);
+}
+
+void cleanup_stretch(Stretch s) {
+
+    free(s->output_data);
+
+    int i;
+    for (i = 0; i < s->channels; i++) {
+        free(s->buffers[i]);
+    }
+    free(s->buffers);
+
+    free(s);
 }
 

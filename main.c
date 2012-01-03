@@ -88,6 +88,7 @@ void main (int argc, char *argv[]) {
     write_wav(&of);
 
     cleanup_fft(fft);
+    cleanup_stretch(stretch);
     free_wav(&af);
 
 }

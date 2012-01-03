@@ -34,6 +34,7 @@ Stretch create_stretch(float *wavdata,
 
 void next_input_section(Stretch s);
 void add_output(Stretch s);
+void cleanup_stretch(Stretch s);
 
 #endif
 
