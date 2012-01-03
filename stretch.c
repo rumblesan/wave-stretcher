@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include "stretch.h"
 
-void setup_stretch(Stretch s,
-                   float *wavdata,
-                   int frames,
-                   int channels,
-                   int window_size,
-                   float ratio) {
+Stretch create_stretch(float *wavdata,
+                       int frames,
+                       int channels,
+                       int window_size,
+                       float ratio) {
 
+    Stretch s = (Stretch) malloc(sizeof(Stretch_Data));
     s->window_size  = window_size;
     s->channels     = channels;
     s->ratio        = ratio;
@@ -44,6 +44,7 @@ void setup_stretch(Stretch s,
     for (i = 0; i < s->channels; i++) {
         s->buffers[i] = (float*) malloc(sizeof(float) * s->window_size);
     }
+    return s;
 }
 
 /*

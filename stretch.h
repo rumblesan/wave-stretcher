@@ -23,14 +23,14 @@ typedef struct stretch_data {
     int window_size;
 
     float **buffers;
+
 } Stretch_Data;
 
-void setup_stretch(Stretch s,
-                   float *wavdata,
-                   int frames,
-                   int channels,
-                   int window_size,
-                   float ratio);
+Stretch create_stretch(float *wavdata,
+                       int frames,
+                       int channels,
+                       int window_size,
+                       float ratio);
 
 void next_input_section(Stretch s);
 void add_output(Stretch s);

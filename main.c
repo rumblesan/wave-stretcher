@@ -56,14 +56,11 @@ void main (int argc, char *argv[]) {
 
     int window_size = args.window_size;
     float ratio = args.speed_ratio;
-    Stretch_Data sdata;
-    Stretch stretch = &sdata;
-    setup_stretch(stretch,
-                  af.sound_data,
-                  af.info.frames,
-                  af.info.channels,
-                  window_size,
-                  ratio);
+    Stretch stretch = create_stretch(af.sound_data,
+                                     af.info.frames,
+                                     af.info.channels,
+                                     window_size,
+                                     ratio);
 
     FFT fft = create_FFT(window_size);
 
