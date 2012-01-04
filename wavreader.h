@@ -13,7 +13,7 @@ typedef struct audio_file {
 } AudioFile_Data;
 
 AudioFile read_wav(char *filename);
-void write_wav(struct audio_file *af);
-void print_wav(struct audio_file *af);
+void write_wav(AudioFile af);
+void cleanup_wav(AudioFile af);
 
 #endif

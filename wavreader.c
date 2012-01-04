@@ -18,12 +18,6 @@ AudioFile read_wav(char *filename) {
     return af;
 }
 
-void free_wav(AudioFile af) {
-
-    free(af->sound_data);
-    sf_close(af->sf);
-}
-
 void write_wav(AudioFile af) {
 
     sf_count_t frame_num = af->info.frames;
@@ -34,5 +28,12 @@ void write_wav(AudioFile af) {
         sf_writef_float(af->sf, af->sound_data, frame_num);
         sf_close(af->sf);
     }
+}
+
+void cleanup_wav(AudioFile af) {
+
+    free(af->sound_data);
+    sf_close(af->sf);
+    free(af);
 }
 
