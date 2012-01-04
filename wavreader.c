@@ -3,7 +3,7 @@
 #include "wavreader.h"
 
 
-void read_wav(struct audio_file *af) {
+void read_wav(AudioFile af) {
 
     af->info.format = 0;
     af->sf = sf_open(af->filename, SFM_READ, &af->info);
@@ -13,13 +13,13 @@ void read_wav(struct audio_file *af) {
 
 }
 
-void free_wav(struct audio_file *af) {
+void free_wav(AudioFile af) {
 
     free(af->sound_data);
     sf_close(af->sf);
 }
 
-void write_wav(struct audio_file *af) {
+void write_wav(AudioFile af) {
 
     sf_count_t frame_num = af->info.frames;
     af->sf = sf_open(af->filename, SFM_WRITE, &af->info);

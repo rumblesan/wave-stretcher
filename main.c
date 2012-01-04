@@ -64,14 +64,15 @@ void main (int argc, char *argv[]) {
 
     struct input_args args = parse_args(argc, argv);
 
-    struct audio_file af;
-    af.filename = args.input_file;
+    AudioFile_Data af_data;
+    AudioFile af = &af_data;
+    af->filename = args.input_file;
 
-    read_wav(&af);
+    read_wav(af);
 
-    Stretch stretch = create_stretch(af.sound_data,
-                                     af.info.frames,
-                                     af.info.channels,
+    Stretch stretch = create_stretch(af->sound_data,
+                                     af->info.frames,
+                                     af->info.channels,
                                      args.window_size,
                                      args.stretch);
 
@@ -80,7 +81,7 @@ void main (int argc, char *argv[]) {
     int i;
     while (stretch->finished != 1) {
         next_input_section(stretch);
-        for (i = 0; i < af.info.channels; i++) {
+        for (i = 0; i < af->info.channels; i++) {
             get_data(fft, stretch->buffers[i]);
             samp_to_freq(fft);
             pauls_algo(fft);
@@ -93,16 +94,16 @@ void main (int argc, char *argv[]) {
     struct audio_file of;
     of.filename        = args.output_file;
     of.sound_data      = stretch->output_data;
-    of.info.samplerate = af.info.samplerate;
-    of.info.channels   = af.info.channels;
-    of.info.format     = af.info.format;
+    of.info.samplerate = af->info.samplerate;
+    of.info.channels   = af->info.channels;
+    of.info.format     = af->info.format;
     of.info.frames     = stretch->output_frames;
 
     write_wav(&of);
 
     cleanup_fft(fft);
     cleanup_stretch(stretch);
-    free_wav(&af);
+    free_wav(af);
 
 }
 

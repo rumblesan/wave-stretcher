@@ -3,12 +3,14 @@
 
 #include <sndfile.h>
 
-struct audio_file {
+typedef struct audio_file *AudioFile;
+
+typedef struct audio_file {
     SNDFILE *sf;
     char *filename;
     SF_INFO info;
     float *sound_data;
-};
+} AudioFile_Data;
 
 void read_wav(struct audio_file *af);
 void write_wav(struct audio_file *af);
