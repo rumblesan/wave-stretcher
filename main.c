@@ -14,9 +14,9 @@ void usage(int exitval) {
     exit(exitval);
 }
 
-struct input_args parse_args(int argc, char *argv[]) {
+Args parse_args(int argc, char *argv[]) {
 
-    struct input_args args = {"","",2048,5};
+    Args args = {"","",2048,5};
 
     int c;
     while ( (c = getopt(argc, argv, "i:o:s:w:h")) != -1) {
@@ -62,7 +62,7 @@ struct input_args parse_args(int argc, char *argv[]) {
 
 void main (int argc, char *argv[]) {
 
-    struct input_args args = parse_args(argc, argv);
+    Args input_args args = parse_args(argc, argv);
 
     AudioFile af = read_wav(args.input_file);
 
