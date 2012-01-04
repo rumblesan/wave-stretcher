@@ -3,7 +3,11 @@
 #include "wavreader.h"
 
 
-void read_wav(AudioFile af) {
+AudioFile read_wav(char *filename) {
+
+    AudioFile af = (AudioFile) malloc(sizeof(AudioFile_Data));
+
+    af->filename = filename;
 
     af->info.format = 0;
     af->sf = sf_open(af->filename, SFM_READ, &af->info);
@@ -11,6 +15,7 @@ void read_wav(AudioFile af) {
     af->sound_data = (float*) malloc(sizeof(float) * af->info.channels * (int)af->info.frames);
     sf_readf_float(af->sf, af->sound_data, af->info.frames);
 
+    return af;
 }
 
 void free_wav(AudioFile af) {

@@ -64,11 +64,7 @@ void main (int argc, char *argv[]) {
 
     struct input_args args = parse_args(argc, argv);
 
-    AudioFile_Data af_data;
-    AudioFile af = &af_data;
-    af->filename = args.input_file;
-
-    read_wav(af);
+    AudioFile af = read_wav(args.input_file);
 
     Stretch stretch = create_stretch(af->sound_data,
                                      af->info.frames,
@@ -91,7 +87,7 @@ void main (int argc, char *argv[]) {
         add_output(stretch);
     }
 
-    struct audio_file of;
+    AudioFile_Data of;
     of.filename        = args.output_file;
     of.sound_data      = stretch->output_data;
     of.info.samplerate = af->info.samplerate;

@@ -12,7 +12,7 @@ typedef struct audio_file {
     float *sound_data;
 } AudioFile_Data;
 
-void read_wav(struct audio_file *af);
+AudioFile read_wav(char *filename);
 void write_wav(struct audio_file *af);
 void print_wav(struct audio_file *af);
 
