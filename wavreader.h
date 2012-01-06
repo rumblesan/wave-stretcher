@@ -26,6 +26,7 @@ AudioFile read_audio_file(char *filename);
 Samples get_audio_data(AudioFile af, int size);
 void write_wav(AudioFile af);
 void cleanup_audio_file(AudioFile af);
+Samples create_sample_buffer();
 void cleanup_sample_buffer(Samples smps);
 
 #endif

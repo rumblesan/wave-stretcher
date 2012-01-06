@@ -21,15 +21,6 @@ Samples get_audio_data(AudioFile af, int size) {
     int channels = af->info.channels;
     int i,j;
 
-    Samples smps = (Samples) malloc(sizeof(Samples_Data));
-    smps->size = size;
-    smps->channels = channels;
-
-    smps->buffers = (float**) malloc(sizeof(float*) * channels);
-    for (i = 0; i < channels; i++) {
-        smps->buffers[i] = (float*) malloc(sizeof(float*) * size);
-    }
-
     int buffer_size = size * channels;
 
     float iobuffer[buffer_size];
@@ -41,6 +32,7 @@ Samples get_audio_data(AudioFile af, int size) {
         }
     }
 
+    Samples smps = create_sample_buffer(channels, size);
     for (i = 0; i < channels; i++) {
         for (j = 0; j < size; j++) {
             smps->buffers[i][j] = iobuffer[i+j];
@@ -70,6 +62,20 @@ void cleanup_audio_file(AudioFile af) {
     free(af);
 }
 
+Samples create_sample_buffer(int channels, int size) {
+    Samples smps   = (Samples) malloc(sizeof(Samples_Data));
+    smps->size     = size;
+    smps->channels = channels;
+
+    smps->buffers = (float**) malloc(sizeof(float*) * channels);
+    int i;
+    for (i = 0; i < channels; i++) {
+        smps->buffers[i] = (float*) malloc(sizeof(float*) * size);
+    }
+
+    return smps;
+}
+
 void cleanup_sample_buffer(Samples smps) {
     int i;
     for (i = 0; i < smps->channels; i++) {
@@ -77,5 +83,8 @@ void cleanup_sample_buffer(Samples smps) {
     }
     free(smps->buffers);
     free(smps);
+}
+
+void main () {
 }
 
