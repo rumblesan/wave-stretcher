@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <sndfile.h>
-#include "wavreader.h"
+#include "audiodata.h"
 
 
 AudioFile read_audio_file(char *filename) {
@@ -83,8 +83,5 @@ void cleanup_sample_buffer(Samples smps) {
     }
     free(smps->buffers);
     free(smps);
-}
-
-void main () {
 }
 

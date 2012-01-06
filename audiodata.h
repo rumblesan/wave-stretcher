@@ -1,5 +1,5 @@
-#ifndef WAVREADER_H
-#define WAVREADER_H
+#ifndef AUDIODATA_H
+#define AUDIODATA_H
 
 #include <sndfile.h>
 
