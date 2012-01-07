@@ -84,17 +84,15 @@ Samples next_window(Stretch s) {
 
 Samples create_output_buffer(Stretch s, Samples smps) {
 
-    Samples output = create_sample_buffer(1, s->channels * (s->window_size/2));
     int i,j;
     float data;
     int halfwindow = s->window_size/2;
-    int pos;
+    Samples output = create_sample_buffer(s->channels, halfwindow);
     for (i = 0; i < s->channels;i++) {
         for (j = 0; j < halfwindow;j++) {
-            pos = (j*s->channels) + i;
             data  = s->old_output->buffers[i][j+halfwindow];
             data += smps->buffers[i][j];
-            output->buffers[0][pos] = data;
+            output->buffers[i][j] = data;
         }
     }
     cleanup_sample_buffer(s->old_output);
