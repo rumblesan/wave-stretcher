@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "fft.h"
+#include "audiodata.h"
 
 
 FFT create_FFT (int window_size) {
@@ -14,7 +15,6 @@ FFT create_FFT (int window_size) {
 
     f->window = (float*) malloc(sizeof(float) * f->window_size);
 
-    f->smps    = (float*) fftwf_malloc(sizeof(float) * f->window_size);
     f->data    = (float*) fftwf_malloc(sizeof(float) * f->window_size);
     f->freq    = (float*) fftwf_malloc(sizeof(float) * f->window_size / 2+1);
 
@@ -29,17 +29,21 @@ FFT create_FFT (int window_size) {
     return f;
 }
 
-void get_data(FFT f, float *input) {
-    int i;
-    for (i = 0; i < f->window_size; i++) {
-        f->smps[i] = input[i];
-    }
+void get_data(FFT f, Samples smps) {
+    f->sample_buffer = smps;
 }
 
-void return_data(FFT f, float *output) {
+Samples return_data(FFT f) {
+    return f->sample_buffer;
+}
+
+void run_fft(FFT f) {
     int i;
-    for (i = 0; i < f->window_size; i++) {
-        output[i] = f->smps[i];
+    for (i=0; i<f->sample_buffer->channels;i++) {
+        f->smps = f->sample_buffer->buffers[i];
+        samp_to_freq(f);
+        pauls_algo(f);
+        freq_to_samp(f);
     }
 }
 
@@ -119,7 +123,6 @@ void cleanup_fft (FFT f) {
     fftwf_destroy_plan(f->inverse);
 
     free(f->window);
-    fftwf_free(f->smps);
     fftwf_free(f->data);
     fftwf_free(f->freq);
 

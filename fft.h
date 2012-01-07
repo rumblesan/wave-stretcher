@@ -2,6 +2,7 @@
 #define FFT_H
 
 #include <fftw3.h>
+#include "audiodata.h"
 
 typedef struct fft_data *FFT;
 
@@ -12,6 +13,7 @@ typedef struct fft_data {
 
     float *window;
 
+    Samples sample_buffer;
     float *smps;
     float *data;
     float *freq;
@@ -21,12 +23,14 @@ typedef struct fft_data {
 } FFT_Data;
 
 FFT create_FFT (int window_size);
-void get_data(FFT f, float *input);
-void return_data(FFT f, float *output);
+void get_data(FFT f, Samples smps);
+Samples return_data(FFT f);
+void run_fft(FFT f);
 void window_data(FFT f);
 void normalise_data(FFT f);
-void freq_to_samp(FFT f);
 void samp_to_freq(FFT f);
+void pauls_algo(FFT f);
+void freq_to_samp(FFT f);
 void cleanup_fft(FFT f);
 
 #endif
