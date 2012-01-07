@@ -29,16 +29,9 @@ FFT create_FFT (int window_size) {
     return f;
 }
 
-void get_data(FFT f, Samples smps) {
-    f->sample_buffer = smps;
-}
-
-Samples return_data(FFT f) {
-    return f->sample_buffer;
-}
-
-void run_fft(FFT f) {
+void run_fft(FFT f, Samples smps) {
     int i;
+    f->sample_buffer = smps;
     for (i=0; i<f->sample_buffer->channels;i++) {
         f->smps = f->sample_buffer->buffers[i];
         samp_to_freq(f);
