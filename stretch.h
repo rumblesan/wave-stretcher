@@ -1,40 +1,31 @@
 #ifndef STRETCH_H
 #define STRETCH_H
 
+#include "audiodata.h"
+
+
 typedef struct stretch_data *Stretch;
 
 typedef struct stretch_data {
 
-    float *input_data;
-    int    input_frames;
-    float  input_offset;
-
-
-    float *output_data;
-    int    output_frames;
-    int    output_offset;
-
-    float stretch;
+    int window_size;
+    int channels;
     float speed;
 
-    int channels;
-
-    int finished;
-
-    int window_size;
+    int need_more_audio;
+    float input_offset;
+    int buffer_size;
 
     float **buffers;
 
 } Stretch_Data;
 
-Stretch create_stretch(float *wavdata,
-                       int frames,
-                       int channels,
+Stretch create_stretch(int channels,
                        int window_size,
                        float ratio);
 
-void next_input_section(Stretch s);
-void add_output(Stretch s);
+void add_samples(Stretch s, Samples smps);
+Samples next_window(Stretch s);
 void cleanup_stretch(Stretch s);
 
 #endif

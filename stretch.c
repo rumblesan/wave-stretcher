@@ -1,112 +1,86 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "stretch.h"
+#include "audiodata.h"
 
 
-Stretch create_stretch(float *wavdata,
-                       int frames,
-                       int channels,
+Stretch create_stretch(int channels,
                        int window_size,
                        float stretch) {
 
-    Stretch s = (Stretch) malloc(sizeof(Stretch_Data));
+    Stretch s       = (Stretch) malloc(sizeof(Stretch_Data));
     s->window_size  = window_size;
     s->channels     = channels;
-    s->stretch      = stretch;
     s->speed        = 1.0/stretch;
 
-    s->input_data   = wavdata;
-    s->input_frames = frames;
-    s->input_offset = 0.0;
-
-    s->finished     = 0;
-
-
-    /*
-       creating initial output buffer
-       initial size needs to be number:
-       channels * (window_size / 2)
-    */
-    s->output_frames = s->window_size / 2;
-    s->output_offset = 0;
-
-    int buffer_size = s->output_frames * s->channels;
-    int i;
-
-    s->output_data   = (float*) malloc(sizeof(float) * buffer_size);
-    for (i = 0; i < buffer_size; i++) {
-        s->output_data[i] = 0;
-    }
-
+    s->need_more_audio = 1;
+    s->input_offset    = 0.0;
+    s->buffer_size     = window_size;
     /*
        create buffers. one for each channel
-       each needs to be "window_size" number of elements
     */
     s->buffers = (float**) malloc(sizeof(float*) * s->channels);
+    int i,j;
     for (i = 0; i < s->channels; i++) {
         s->buffers[i] = (float*) malloc(sizeof(float) * s->window_size);
+        for (j = 0; j < s->window_size; j++) {
+            s->buffers[i][j] = 0.0;
+        }
     }
+
     return s;
 }
 
-/*
-   reads data from the input buffer,
-   splits it into seperate channels
-   fills the channel buffers
-   each is "window_size" long
-*/
-void next_input_section(Stretch s) {
+void add_samples(Stretch s, Samples smps) {
 
-    int i, j, k;
-    float data;
+    float *tmp_buffer;
+    int i,j;
+    int offset = (int) floor(s->input_offset);
+    int size   = s->buffer_size;
+    int rem    = size - offset;
 
-    for (i = 0; i < s->window_size; i++) {
-        j = s->channels * (i + (int)s->input_offset);
-        for (k = 0; k < s->channels; k++) {
-            if ((i + k + (int)s->input_offset) >= s->input_frames) {
-                data = 0.0;
-                s->finished = 1;
-            } else {
-                data = s->input_data[j+k];
-            }
-            s->buffers[k][i] = data;
+    for (i = 0; i < s->channels; i++) {
+        tmp_buffer = (float*) malloc(sizeof(float) * (rem+smps->size));
+        for (j = 0; j < rem; j++) {
+            tmp_buffer[j] = s->buffers[i][j+offset];
+        }
+        for (j = 0; j < smps->size; j++) {
+            tmp_buffer[j+rem] = smps->buffers[i][j];
+        }
+        free(s->buffers[i]);
+        s->buffers[i] = tmp_buffer;
+    }
+
+    s->input_offset   -= floor(s->input_offset);
+    s->buffer_size     = rem+smps->size;
+    s->need_more_audio = 0;
+
+}
+
+Samples next_window(Stretch s) {
+
+    int i, j;
+    int offset = (int) floor(s->input_offset);
+
+    Samples smps = create_sample_buffer(s->channels, s->window_size);
+
+    for (i = 0; i < s->channels; i++) {
+        for (j = 0; j < s->window_size; j++) {
+            smps->buffers[i][j] = s->buffers[i][j+offset];
         }
     }
 
     s->input_offset += s->speed * ((float)s->window_size * 0.5);
-}
 
-void add_output(Stretch s) {
-
-    int i, j, k;
-    int buffer_size;
-    float data;
-
-    /*
-       because the windows are being overlapped we extend the output
-       buffer by half a windowsize for each channel
-   */
-
-    buffer_size = s->channels * (s->output_frames + (s->window_size / 2));
-    s->output_data = (float*) realloc(s->output_data, sizeof(float) * buffer_size);
-    for (i = (s->channels * s->output_frames); i < buffer_size; i++) {
-        s->output_data[i] = 0;
+    if (floor(s->input_offset) >= s->window_size) {
+        s->need_more_audio = 1;
     }
-    s->output_frames += (s->window_size / 2);
 
-    for (i = 0; i < s->window_size; i++) {
-        j = s->channels * (i + (int)s->output_offset);
-        for (k = 0; k < s->channels; k++) {
-            data  = s->buffers[k][i];
-            s->output_data[j+k] += data;
-        }
-    }
-    s->output_offset += (s->window_size / 2);
+    return smps;
 }
 
 void cleanup_stretch(Stretch s) {
-
-    free(s->output_data);
 
     int i;
     for (i = 0; i < s->channels; i++) {

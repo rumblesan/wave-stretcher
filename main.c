@@ -4,7 +4,7 @@
 #include "main.h"
 #include "fft.h"
 #include "stretch.h"
-#include "wavreader.h"
+#include "audiodata.h"
 
 void usage(int exitval) {
     printf("Wave Stretch usage:\n");
@@ -60,46 +60,45 @@ Args parse_args(int argc, char *argv[]) {
     return args;
 }
 
-void main (int argc, char *argv[]) {
+int main (int argc, char *argv[]) {
 
-    Args input_args args = parse_args(argc, argv);
+    Args args = parse_args(argc, argv);
 
-    AudioFile af = read_wav(args.input_file);
+    AudioFile af = read_audio_file(args.input_file);
+    Samples tmp_smps;
 
-    Stretch stretch = create_stretch(af->sound_data,
-                                     af->info.frames,
-                                     af->info.channels,
+    Stretch stretch = create_stretch(af->info.channels,
                                      args.window_size,
                                      args.stretch);
 
     FFT fft = create_FFT(args.window_size);
 
-    int i;
-    while (stretch->finished != 1) {
-        next_input_section(stretch);
-        for (i = 0; i < af->info.channels; i++) {
-            get_data(fft, stretch->buffers[i]);
-            samp_to_freq(fft);
-            pauls_algo(fft);
-            freq_to_samp(fft);
-            return_data(fft, stretch->buffers[i]);
+    /*
+        need to load in data for the stretch
+    */
+    tmp_smps = get_audio_data(af, stretch->window_size);
+    add_samples(stretch, tmp_smps);
+    cleanup_sample_buffer(tmp_smps);
+
+    while (af->finished != 1) {
+        printf("GOING\n");
+        if (stretch->need_more_audio) {
+            printf("GETTING DATA\n");
+            tmp_smps = get_audio_data(af, stretch->window_size);
+            add_samples(stretch, tmp_smps);
+            cleanup_sample_buffer(tmp_smps);
         }
-        add_output(stretch);
+        tmp_smps = next_window(stretch);
+
+        cleanup_sample_buffer(tmp_smps);
     }
-
-    AudioFile_Data of;
-    of.filename        = args.output_file;
-    of.sound_data      = stretch->output_data;
-    of.info.samplerate = af->info.samplerate;
-    of.info.channels   = af->info.channels;
-    of.info.format     = af->info.format;
-    of.info.frames     = stretch->output_frames;
-
-    write_wav(&of);
+    printf("cleaning up\n");
 
     cleanup_fft(fft);
     cleanup_stretch(stretch);
-    cleanup_wav(af);
+    cleanup_audio_file(af);
+
+    return 0;
 
 }
 
