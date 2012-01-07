@@ -1,1 +1,1 @@
-cc main.c wavreader.c fft.c stretch.c -lfftw3f -lm -lsndfile
+cc main.c audiodata.c fft.c stretch.c -g -lfftw3f -lm -lsndfile
