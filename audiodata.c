@@ -22,12 +22,13 @@ Samples get_audio_data(AudioFile af, int size) {
     int i,j;
 
     int buffer_size = size * channels;
+    int read_amount;
 
     float iobuffer[buffer_size];
-    int read_amount = sf_readf_float(af->sf, iobuffer, size);
-    if (read_amount < buffer_size) {
+    read_amount = (int) sf_readf_float(af->sf, iobuffer, size);
+    if (read_amount < size) {
         af->finished = 1;
-        for (i = read_amount; i < buffer_size; i++) {
+        for (i = read_amount*channels; i < buffer_size; i++) {
             iobuffer[i] = 0.0;
         }
     }
