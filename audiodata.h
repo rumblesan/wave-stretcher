@@ -23,8 +23,12 @@ typedef struct audio_samples {
 } Samples_Data;
 
 AudioFile read_audio_file(char *filename);
+AudioFile write_audio_file(char *filename,
+                           int samplerate,
+                           int channels,
+                           int format);
 Samples get_audio_data(AudioFile af, int size);
-void write_wav(AudioFile af);
+void write_audio_data(AudioFile af, Samples smps);
 void cleanup_audio_file(AudioFile af);
 Samples create_sample_buffer();
 void cleanup_sample_buffer(Samples smps);

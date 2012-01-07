@@ -16,6 +16,23 @@ AudioFile read_audio_file(char *filename) {
     return af;
 }
 
+AudioFile write_audio_file(char *filename,
+                           int samplerate,
+                           int channels,
+                           int format) {
+
+    AudioFile af = (AudioFile) malloc(sizeof(AudioFile_Data));
+
+    af->filename = filename;
+
+    af->info.samplerate = samplerate;
+    af->info.channels   = channels;
+    af->info.format     = format;
+    af->sf = sf_open(af->filename, SFM_WRITE, &af->info);
+
+    return af;
+}
+
 Samples get_audio_data(AudioFile af, int size) {
 
     int channels = af->info.channels;
@@ -44,18 +61,23 @@ Samples get_audio_data(AudioFile af, int size) {
 
 }
 
-void write_wav(AudioFile af) {
+void write_audio_data(AudioFile af, Samples smps) {
 
-    /*
-    sf_count_t frame_num = af->info.frames;
-    af->sf = sf_open(af->filename, SFM_WRITE, &af->info);
-    if (af->sf == NULL) {
-        printf("ERROR OPENING\n");
-    } else {
-        sf_writef_float(af->sf, af->sound_data, frame_num);
-        sf_close(af->sf);
+    float *tmp_buffer;
+    int i,j;
+    int pos;
+    tmp_buffer = malloc(sizeof(float) * smps->channels * smps->size);
+    for (i = 0; i < smps->channels; i++) {
+        for (j = 0; j < smps->size; j++) {
+            pos = (j * smps->channels) + i;
+            tmp_buffer[pos] = smps->buffers[i][j];
+        }
     }
-    */
+
+    sf_writef_float(af->sf, tmp_buffer, smps->size);
+
+    free(tmp_buffer);
+    cleanup_sample_buffer(smps);
 }
 
 void cleanup_audio_file(AudioFile af) {
