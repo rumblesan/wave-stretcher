@@ -14,9 +14,10 @@ typedef struct stretch_data {
 
     int need_more_audio;
     float input_offset;
-    int buffer_size;
 
-    float **buffers;
+    Samples input;
+
+    Samples old_output;
 
 } Stretch_Data;
 
@@ -26,6 +27,7 @@ Stretch create_stretch(int channels,
 
 void add_samples(Stretch s, Samples smps);
 Samples next_window(Stretch s);
+Samples create_output_buffer(Stretch s, Samples smps);
 void cleanup_stretch(Stretch s);
 
 #endif

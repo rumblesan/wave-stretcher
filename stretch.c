@@ -16,16 +16,17 @@ Stretch create_stretch(int channels,
 
     s->need_more_audio = 1;
     s->input_offset    = 0.0;
-    s->buffer_size     = window_size;
     /*
-       create buffers. one for each channel
+       create buffers
     */
-    s->buffers = (float**) malloc(sizeof(float*) * s->channels);
+    s->input = create_sample_buffer(s->channels, s->window_size);
+    s->old_output = create_sample_buffer(s->channels, s->window_size);
     int i,j;
+
     for (i = 0; i < s->channels; i++) {
-        s->buffers[i] = (float*) malloc(sizeof(float) * s->window_size);
         for (j = 0; j < s->window_size; j++) {
-            s->buffers[i][j] = 0.0;
+            s->input->buffers[i][j] = 0.0;
+            s->old_output->buffers[i][j] = 0.0;
         }
     }
 
@@ -34,27 +35,28 @@ Stretch create_stretch(int channels,
 
 void add_samples(Stretch s, Samples smps) {
 
-    float *tmp_buffer;
+    Samples tmp_samples;
     int i,j;
     int offset = (int) floor(s->input_offset);
-    int size   = s->buffer_size;
+    int size   = s->input->size;
     int rem    = size - offset;
 
+    tmp_samples = create_sample_buffer(s->channels, rem+smps->size);
     for (i = 0; i < s->channels; i++) {
-        tmp_buffer = (float*) malloc(sizeof(float) * (rem+smps->size));
         for (j = 0; j < rem; j++) {
-            tmp_buffer[j] = s->buffers[i][j+offset];
+            tmp_samples->buffers[i][j] = s->input->buffers[i][j+offset];
         }
         for (j = 0; j < smps->size; j++) {
-            tmp_buffer[j+rem] = smps->buffers[i][j];
+            tmp_samples->buffers[i][j+rem] = smps->buffers[i][j];
         }
-        free(s->buffers[i]);
-        s->buffers[i] = tmp_buffer;
     }
 
+    cleanup_sample_buffer(s->input);
+    s->input           = tmp_samples;
     s->input_offset   -= floor(s->input_offset);
-    s->buffer_size     = rem+smps->size;
     s->need_more_audio = 0;
+
+    cleanup_sample_buffer(smps);
 
 }
 
@@ -67,7 +69,7 @@ Samples next_window(Stretch s) {
 
     for (i = 0; i < s->channels; i++) {
         for (j = 0; j < s->window_size; j++) {
-            smps->buffers[i][j] = s->buffers[i][j+offset];
+            smps->buffers[i][j] = s->input->buffers[i][j+offset];
         }
     }
 
@@ -80,13 +82,30 @@ Samples next_window(Stretch s) {
     return smps;
 }
 
+Samples create_output_buffer(Stretch s, Samples smps) {
+
+    Samples output = create_sample_buffer(1, s->channels * (s->window_size/2));
+    int i,j;
+    float data;
+    int halfwindow = s->window_size/2;
+    int pos;
+    for (i = 0; i < s->channels;i++) {
+        for (j = 0; j < halfwindow;j++) {
+            pos = (j*s->channels) + i;
+            data  = s->old_output->buffers[i][j+halfwindow];
+            data += smps->buffers[i][j];
+            output->buffers[0][pos] = data;
+        }
+    }
+    cleanup_sample_buffer(s->old_output);
+    s->old_output = smps;
+    return output;
+}
+
 void cleanup_stretch(Stretch s) {
 
-    int i;
-    for (i = 0; i < s->channels; i++) {
-        free(s->buffers[i]);
-    }
-    free(s->buffers);
+    cleanup_sample_buffer(s->input);
+    cleanup_sample_buffer(s->old_output);
 
     free(s);
 }
