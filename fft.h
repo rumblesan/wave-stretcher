@@ -13,7 +13,6 @@ typedef struct fft_data {
 
     float *window;
 
-    Samples sample_buffer;
     float *smps;
     float *data;
     float *freq;

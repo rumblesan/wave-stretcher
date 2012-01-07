@@ -30,13 +30,15 @@ FFT create_FFT (int window_size) {
 }
 
 void run_fft(FFT f, Samples smps) {
-    int i;
-    f->sample_buffer = smps;
-    for (i=0; i<f->sample_buffer->channels;i++) {
-        f->smps = f->sample_buffer->buffers[i];
+    int i,j;
+    for (i = 0; i < smps->channels; i++) {
+        f->smps = smps->buffers[i];
         samp_to_freq(f);
         pauls_algo(f);
         freq_to_samp(f);
+        for (j = 0; j < smps->size; j++) {
+            smps->buffers[i][j] = f->smps[j];
+        }
     }
 }
 
