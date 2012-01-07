@@ -65,7 +65,12 @@ int main (int argc, char *argv[]) {
     Args args = parse_args(argc, argv);
 
     AudioFile af = read_audio_file(args.input_file);
+    AudioFile of = write_audio_file(args.output_file,
+                                    af->info.samplerate,
+                                    af->info.channels,
+                                    af->info.format);
     Samples tmp_smps;
+    Samples fileoutput;
 
     Stretch stretch = create_stretch(af->info.channels,
                                      args.window_size,
@@ -78,25 +83,27 @@ int main (int argc, char *argv[]) {
     */
     tmp_smps = get_audio_data(af, stretch->window_size);
     add_samples(stretch, tmp_smps);
-    cleanup_sample_buffer(tmp_smps);
 
     while (af->finished != 1) {
-        printf("GOING\n");
+        printf("running\n");
         if (stretch->need_more_audio) {
-            printf("GETTING DATA\n");
+            printf("getting\n");
             tmp_smps = get_audio_data(af, stretch->window_size);
             add_samples(stretch, tmp_smps);
-            cleanup_sample_buffer(tmp_smps);
         }
         tmp_smps = next_window(stretch);
+        get_data(fft, tmp_smps);
+        run_fft(fft);
+        fileoutput = create_output_buffer(stretch, tmp_smps);
 
-        cleanup_sample_buffer(tmp_smps);
+        write_audio_data(of, fileoutput);
     }
     printf("cleaning up\n");
 
     cleanup_fft(fft);
     cleanup_stretch(stretch);
     cleanup_audio_file(af);
+    cleanup_audio_file(of);
 
     return 0;
 
