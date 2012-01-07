@@ -85,20 +85,16 @@ int main (int argc, char *argv[]) {
     add_samples(stretch, tmp_smps);
 
     while (af->finished != 1) {
-        printf("running\n");
         if (stretch->need_more_audio) {
-            printf("getting\n");
             tmp_smps = get_audio_data(af, stretch->window_size);
             add_samples(stretch, tmp_smps);
         }
         tmp_smps = next_window(stretch);
-        get_data(fft, tmp_smps);
-        run_fft(fft);
+        run_fft(fft, tmp_smps);
         fileoutput = create_output_buffer(stretch, tmp_smps);
 
         write_audio_data(of, fileoutput);
     }
-    printf("cleaning up\n");
 
     cleanup_fft(fft);
     cleanup_stretch(stretch);
