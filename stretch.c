@@ -73,9 +73,10 @@ Samples next_window(Stretch s) {
         }
     }
 
-    s->input_offset += s->speed * ((float)s->window_size * 0.5);
+    float offset_inc = s->speed * ((float)s->window_size * 0.5);
+    s->input_offset += offset_inc;
 
-    if (floor(s->input_offset) >= s->window_size) {
+    if (floor(s->input_offset)+offset_inc >= s->window_size) {
         s->need_more_audio = 1;
     }
 
