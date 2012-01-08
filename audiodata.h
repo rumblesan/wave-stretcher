@@ -2,6 +2,7 @@
 #define AUDIODATA_H
 
 #include <sndfile.h>
+#include "sample.h"
 
 typedef struct audio_file *AudioFile;
 
@@ -12,16 +13,6 @@ typedef struct audio_file {
     int finished;
 } AudioFile_Data;
 
-typedef struct audio_samples *Samples;
-typedef struct audio_samples {
-
-    int size;
-    int channels;
-
-    float **buffers;
-
-} Samples_Data;
-
 AudioFile read_audio_file(char *filename);
 AudioFile write_audio_file(char *filename,
                            int samplerate,
@@ -30,7 +21,5 @@ AudioFile write_audio_file(char *filename,
 Samples get_audio_data(AudioFile af, int size);
 void write_audio_data(AudioFile af, Samples smps);
 void cleanup_audio_file(AudioFile af);
-Samples create_sample_buffer();
-void cleanup_sample_buffer(Samples smps);
 
 #endif

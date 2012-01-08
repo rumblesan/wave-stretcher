@@ -1,7 +1,7 @@
 #ifndef STRETCH_H
 #define STRETCH_H
 
-#include "audiodata.h"
+#include "sample.h"
 
 
 typedef struct stretch_data *Stretch;

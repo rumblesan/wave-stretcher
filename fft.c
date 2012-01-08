@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "fft.h"
-#include "audiodata.h"
+#include "sample.h"
 
 
 FFT create_FFT (int window_size) {

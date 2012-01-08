@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "stretch.h"
-#include "audiodata.h"
+#include "sample.h"
 
 
 Stretch create_stretch(int channels,

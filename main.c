@@ -5,6 +5,7 @@
 #include "fft.h"
 #include "stretch.h"
 #include "audiodata.h"
+#include "sample.h"
 
 void usage(int exitval) {
     printf("Wave Stretch usage:\n");
