@@ -19,8 +19,8 @@ Stretch stretch_create(int channels,
     /*
        create buffers
     */
-    s->input = create_sample_buffer(s->channels, s->window_size);
-    s->old_output = create_sample_buffer(s->channels, s->window_size);
+    s->input      = sbuffer_create(s->channels, s->window_size);
+    s->old_output = sbuffer_create(s->channels, s->window_size);
     int i,j;
 
     for (i = 0; i < s->channels; i++) {
@@ -41,7 +41,7 @@ void stretch_add_samples(Stretch s, Samples smps) {
     int size   = s->input->size;
     int rem    = size - offset;
 
-    tmp_samples = create_sample_buffer(s->channels, rem+smps->size);
+    tmp_samples = sbuffer_create(s->channels, rem+smps->size);
     for (i = 0; i < s->channels; i++) {
         for (j = 0; j < rem; j++) {
             tmp_samples->buffers[i][j] = s->input->buffers[i][j+offset];
@@ -51,13 +51,12 @@ void stretch_add_samples(Stretch s, Samples smps) {
         }
     }
 
-    cleanup_sample_buffer(s->input);
+    sbuffer_cleanup(s->input);
     s->input           = tmp_samples;
     s->input_offset   -= floor(s->input_offset);
     s->need_more_audio = 0;
 
-    cleanup_sample_buffer(smps);
-
+    sbuffer_cleanup(smps);
 }
 
 Samples stretch_window(Stretch s) {
@@ -65,7 +64,7 @@ Samples stretch_window(Stretch s) {
     int i, j;
     int offset = (int) floor(s->input_offset);
 
-    Samples smps = create_sample_buffer(s->channels, s->window_size);
+    Samples smps = sbuffer_create(s->channels, s->window_size);
 
     for (i = 0; i < s->channels; i++) {
         for (j = 0; j < s->window_size; j++) {
@@ -88,7 +87,7 @@ Samples stretch_output(Stretch s, Samples smps) {
     int i,j;
     float data;
     int halfwindow = s->window_size/2;
-    Samples output = create_sample_buffer(s->channels, halfwindow);
+    Samples output = sbuffer_create(s->channels, halfwindow);
     for (i = 0; i < s->channels;i++) {
         for (j = 0; j < halfwindow;j++) {
             data  = s->old_output->buffers[i][j+halfwindow];
@@ -96,15 +95,15 @@ Samples stretch_output(Stretch s, Samples smps) {
             output->buffers[i][j] = data;
         }
     }
-    cleanup_sample_buffer(s->old_output);
+    sbuffer_cleanup(s->old_output);
     s->old_output = smps;
     return output;
 }
 
 void stretch_cleanup(Stretch s) {
 
-    cleanup_sample_buffer(s->input);
-    cleanup_sample_buffer(s->old_output);
+    sbuffer_cleanup(s->input);
+    sbuffer_cleanup(s->old_output);
 
     free(s);
 }
