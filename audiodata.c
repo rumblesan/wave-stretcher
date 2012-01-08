@@ -40,6 +40,7 @@ Samples get_audio_data(AudioFile af, int size) {
 
     int buffer_size = size * channels;
     int read_amount;
+    int pos;
 
     float iobuffer[buffer_size];
     read_amount = (int) sf_readf_float(af->sf, iobuffer, size);
@@ -53,7 +54,8 @@ Samples get_audio_data(AudioFile af, int size) {
     Samples smps = create_sample_buffer(channels, size);
     for (i = 0; i < channels; i++) {
         for (j = 0; j < size; j++) {
-            smps->buffers[i][j] = iobuffer[i+j];
+            pos = (j * channels) + i;
+            smps->buffers[i][j] = iobuffer[pos];
         }
     }
 
@@ -63,20 +65,19 @@ Samples get_audio_data(AudioFile af, int size) {
 
 void write_audio_data(AudioFile af, Samples smps) {
 
-    float *tmp_buffer;
     int i,j;
     int pos;
-    tmp_buffer = malloc(sizeof(float) * smps->channels * smps->size);
+    int buffer_size = smps->channels * smps->size;
+    float iobuffer[buffer_size];
     for (i = 0; i < smps->channels; i++) {
         for (j = 0; j < smps->size; j++) {
             pos = (j * smps->channels) + i;
-            tmp_buffer[pos] = smps->buffers[i][j];
+            iobuffer[pos] = smps->buffers[i][j];
         }
     }
 
-    sf_writef_float(af->sf, tmp_buffer, smps->size);
+    sf_writef_float(af->sf, iobuffer, smps->size);
 
-    free(tmp_buffer);
     cleanup_sample_buffer(smps);
 }
 
@@ -107,4 +108,31 @@ void cleanup_sample_buffer(Samples smps) {
     free(smps->buffers);
     free(smps);
 }
+
+
+#ifdef AUDIO_TEST
+
+int main() {
+
+    int read_size = 20;
+    Samples smps;
+    AudioFile af = read_audio_file("input.wav");
+    AudioFile of = write_audio_file("output.wav",
+                                    af->info.samplerate,
+                                    af->info.channels,
+                                    af->info.format);
+
+    while (af->finished != 1) {
+        smps = get_audio_data(af, read_size);
+        write_audio_data(of, smps);
+    }
+
+    cleanup_audio_file(af);
+    cleanup_audio_file(of);
+
+    return 0;
+}
+
+#endif
+
 
