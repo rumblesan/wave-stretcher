@@ -84,7 +84,7 @@ int main (int argc, char *argv[]) {
     tmp_smps = get_audio_data(af, stretch->window_size);
     add_samples(stretch, tmp_smps);
 
-    while ((af->finished != 1) && (stretch->need_more_audio != 1)) {
+    while ((af->finished != 1) || (stretch->need_more_audio != 1)) {
         if (stretch->need_more_audio) {
             tmp_smps = get_audio_data(af, stretch->window_size);
             add_samples(stretch, tmp_smps);
