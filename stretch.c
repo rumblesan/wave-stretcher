@@ -5,7 +5,7 @@
 #include "sample.h"
 
 
-Stretch create_stretch(int channels,
+Stretch stretch_create(int channels,
                        int window_size,
                        float stretch) {
 
@@ -33,7 +33,7 @@ Stretch create_stretch(int channels,
     return s;
 }
 
-void add_samples(Stretch s, Samples smps) {
+void stretch_add_samples(Stretch s, Samples smps) {
 
     Samples tmp_samples;
     int i,j;
@@ -60,7 +60,7 @@ void add_samples(Stretch s, Samples smps) {
 
 }
 
-Samples next_window(Stretch s) {
+Samples stretch_window(Stretch s) {
 
     int i, j;
     int offset = (int) floor(s->input_offset);
@@ -83,7 +83,7 @@ Samples next_window(Stretch s) {
     return smps;
 }
 
-Samples create_output_buffer(Stretch s, Samples smps) {
+Samples stretch_output(Stretch s, Samples smps) {
 
     int i,j;
     float data;
@@ -101,7 +101,7 @@ Samples create_output_buffer(Stretch s, Samples smps) {
     return output;
 }
 
-void cleanup_stretch(Stretch s) {
+void stretch_cleanup(Stretch s) {
 
     cleanup_sample_buffer(s->input);
     cleanup_sample_buffer(s->old_output);

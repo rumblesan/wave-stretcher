@@ -21,14 +21,14 @@ typedef struct stretch_data {
 
 } Stretch_Data;
 
-Stretch create_stretch(int channels,
+Stretch stretch_create(int channels,
                        int window_size,
                        float ratio);
 
-void add_samples(Stretch s, Samples smps);
-Samples next_window(Stretch s);
-Samples create_output_buffer(Stretch s, Samples smps);
-void cleanup_stretch(Stretch s);
+void stretch_add_samples(Stretch s, Samples smps);
+Samples stretch_window(Stretch s);
+Samples stretch_output(Stretch s, Samples smps);
+void stretch_cleanup(Stretch s);
 
 #endif
 
