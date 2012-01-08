@@ -21,13 +21,13 @@ typedef struct fft_data {
 
 } FFT_Data;
 
-FFT create_FFT (int window_size);
-void run_fft(FFT f, Samples smps);
-void window_data(FFT f);
-void normalise_data(FFT f);
-void samp_to_freq(FFT f);
-void pauls_algo(FFT f);
-void freq_to_samp(FFT f);
-void cleanup_fft(FFT f);
+FFT fft_create (int window_size);
+void fft_run(FFT f, Samples smps);
+void fft_window_data(FFT f);
+void fft_normalise_data(FFT f);
+void fft_samp_to_freq(FFT f);
+void fft_pauls_algo(FFT f);
+void fft_freq_to_samp(FFT f);
+void fft_cleanup(FFT f);
 
 #endif

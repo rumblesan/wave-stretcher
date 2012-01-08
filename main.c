@@ -77,7 +77,7 @@ int main (int argc, char *argv[]) {
                                      args.window_size,
                                      args.stretch);
 
-    FFT fft = create_FFT(args.window_size);
+    FFT fft = fft_create(args.window_size);
 
     /*
         need to load in data for the stretch
@@ -91,13 +91,13 @@ int main (int argc, char *argv[]) {
             stretch_add_samples(stretch, tmp_smps);
         }
         tmp_smps = stretch_window(stretch);
-        run_fft(fft, tmp_smps);
+        fft_run(fft, tmp_smps);
         fileoutput = stretch_output(stretch, tmp_smps);
 
         write_audio_data(of, fileoutput);
     }
 
-    cleanup_fft(fft);
+    fft_cleanup(fft);
     stretch_cleanup(stretch);
     cleanup_audio_file(af);
     cleanup_audio_file(of);

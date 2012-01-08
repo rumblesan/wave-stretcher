@@ -5,7 +5,7 @@
 #include "sample.h"
 
 
-FFT create_FFT (int window_size) {
+FFT fft_create (int window_size) {
 
     FFT f = (FFT) malloc(sizeof(FFT_Data));
     f->window_size = window_size;
@@ -29,34 +29,34 @@ FFT create_FFT (int window_size) {
     return f;
 }
 
-void run_fft(FFT f, Samples smps) {
+void fft_run(FFT f, Samples smps) {
     int i;
     for (i = 0; i < smps->channels; i++) {
         f->smps = smps->buffers[i];
-        window_data(f);
-        samp_to_freq(f);
-        pauls_algo(f);
-        freq_to_samp(f);
-        normalise_data(f);
-        window_data(f);
+        fft_window_data(f);
+        fft_samp_to_freq(f);
+        fft_pauls_algo(f);
+        fft_freq_to_samp(f);
+        fft_normalise_data(f);
+        fft_window_data(f);
     }
 }
 
-void window_data(FFT f) {
+void fft_window_data(FFT f) {
     int i;
     for (i = 0; i < f->window_size; i++) {
         f->smps[i] *= f->window[i];
     }
 }
 
-void normalise_data(FFT f) {
+void fft_normalise_data(FFT f) {
     int i;
     for (i = 0; i < f->window_size; i++) {
         f->smps[i] /= f->window_size;
     }
 }
 
-void samp_to_freq(FFT f) {
+void fft_samp_to_freq(FFT f) {
 
     int i;
     for (i = 0; i < f->window_size; i++) {
@@ -75,7 +75,7 @@ void samp_to_freq(FFT f) {
 
 }
 
-void pauls_algo(FFT f) {
+void fft_pauls_algo(FFT f) {
 
     int i;
     float inv_2p15_2pi=1.0/16384.0*M_PI;
@@ -96,7 +96,7 @@ void pauls_algo(FFT f) {
 
 }
 
-void freq_to_samp(FFT f) {
+void fft_freq_to_samp(FFT f) {
 
     fftwf_execute(f->inverse);
 
@@ -107,7 +107,7 @@ void freq_to_samp(FFT f) {
 
 }
 
-void cleanup_fft (FFT f) {
+void fft_cleanup (FFT f) {
 
     fftwf_destroy_plan(f->forward);
     fftwf_destroy_plan(f->inverse);
@@ -117,6 +117,5 @@ void cleanup_fft (FFT f) {
     fftwf_free(f->freq);
 
     free(f);
-
 }
 
