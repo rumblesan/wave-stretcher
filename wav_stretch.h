@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef WAVESTRETCH_H
+#define WAVESTRETCH_H
 
 typedef struct input_args {
     char  *input_file;

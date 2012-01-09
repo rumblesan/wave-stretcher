@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "main.h"
+#include "wav_stretch.h"
 #include "fft.h"
 #include "stretch.h"
 #include "audiodata.h"

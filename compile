@@ -1,1 +1,0 @@
-gcc main.c audiodata.c fft.c stretch.c sample.c -Wall -g -lfftw3f -lm -lsndfile
