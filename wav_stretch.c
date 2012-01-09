@@ -73,32 +73,32 @@ int main (int argc, char *argv[]) {
     Samples tmp_smps;
     Samples fileoutput;
 
-    Stretch stretch = create_stretch(af->info.channels,
+    Stretch stretch = stretch_create(af->info.channels,
                                      args.window_size,
                                      args.stretch);
 
-    FFT fft = create_FFT(args.window_size);
+    FFT fft = fft_create(args.window_size);
 
     /*
         need to load in data for the stretch
     */
     tmp_smps = get_audio_data(af, stretch->window_size);
-    add_samples(stretch, tmp_smps);
+    stretch_add_samples(stretch, tmp_smps);
 
     while ((af->finished != 1) || (stretch->need_more_audio != 1)) {
         if (stretch->need_more_audio) {
             tmp_smps = get_audio_data(af, stretch->window_size);
-            add_samples(stretch, tmp_smps);
+            stretch_add_samples(stretch, tmp_smps);
         }
-        tmp_smps = next_window(stretch);
-        run_fft(fft, tmp_smps);
-        fileoutput = create_output_buffer(stretch, tmp_smps);
+        tmp_smps = stretch_window(stretch);
+        fft_run(fft, tmp_smps);
+        fileoutput = stretch_output(stretch, tmp_smps);
 
         write_audio_data(of, fileoutput);
     }
 
-    cleanup_fft(fft);
-    cleanup_stretch(stretch);
+    fft_cleanup(fft);
+    stretch_cleanup(stretch);
     cleanup_audio_file(af);
     cleanup_audio_file(of);
 

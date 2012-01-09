@@ -11,7 +11,7 @@ typedef struct audio_samples {
 
 } Samples_Data;
 
-Samples create_sample_buffer();
-void cleanup_sample_buffer(Samples smps);
+Samples sbuffer_create(int channels, int size);
+void sbuffer_cleanup(Samples smps);
 
 #endif

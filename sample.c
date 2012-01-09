@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "sample.h"
 
-Samples create_sample_buffer(int channels, int size) {
+Samples sbuffer_create(int channels, int size) {
     Samples smps   = (Samples) malloc(sizeof(Samples_Data));
     smps->size     = size;
     smps->channels = channels;
@@ -15,7 +15,7 @@ Samples create_sample_buffer(int channels, int size) {
     return smps;
 }
 
-void cleanup_sample_buffer(Samples smps) {
+void sbuffer_cleanup(Samples smps) {
     int i;
     for (i = 0; i < smps->channels; i++) {
         free(smps->buffers[i]);

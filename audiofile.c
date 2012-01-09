@@ -52,7 +52,7 @@ Samples get_audio_data(AudioFile af, int size) {
         }
     }
 
-    Samples smps = create_sample_buffer(channels, size);
+    Samples smps = sbuffer_create(channels, size);
     for (i = 0; i < channels; i++) {
         for (j = 0; j < size; j++) {
             pos = (j * channels) + i;
@@ -79,7 +79,7 @@ void write_audio_data(AudioFile af, Samples smps) {
 
     sf_writef_float(af->sf, iobuffer, smps->size);
 
-    cleanup_sample_buffer(smps);
+    sbuffer_cleanup(smps);
 }
 
 void cleanup_audio_file(AudioFile af) {
