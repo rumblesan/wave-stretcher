@@ -1,5 +1,5 @@
-#ifndef AUDIODATA_H
-#define AUDIODATA_H
+#ifndef AUDIOFILE
+#define AUDIOFILE
 
 #include <sndfile.h>
 #include "sample.h"

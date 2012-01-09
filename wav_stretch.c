@@ -4,7 +4,7 @@
 #include "wav_stretch.h"
 #include "fft.h"
 #include "stretch.h"
-#include "audiodata.h"
+#include "audiofile.h"
 #include "sample.h"
 
 void usage(int exitval) {
