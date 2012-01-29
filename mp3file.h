@@ -11,8 +11,18 @@ typedef struct mp3_output_file {
     FILE *sf;
     char *filename;
 
+    lame_t lame;
+
     int channels;
     int samplerate;
+    int bitrate;
+    int mode;
+    int quality;
+
+    int lame_init_check;
+
+    int mp3_buffer_size;
+    unsigned char *mp3_buffer;
 
 } MP3File_Output_Data;
 
@@ -40,11 +50,14 @@ MP3InputFile mp3_read_file(char *filename);
 Samples mp3_get_audio(MP3InputFile af, int size);
 void mp3_input_cleanup(MP3InputFile af);
 
-//MP3File mp3_write_file(char *filename,
-//                       int samplerate,
-//                       int channels,
-//                       int format);
-//void mp3_write_data(MP3File af, Samples smps);
-//void mp3_cleanup_file(MP3File af);
+MP3OutputFile mp3_write_file(char *filename,
+                             int channels,
+                             int samplerate,
+                             int bitrate,
+                             int mode,
+                             int quality);
+
+void mp3_write_data(MP3OutputFile af, Samples smps);
+void mp3_output_cleanup(MP3OutputFile af);
 
 #endif

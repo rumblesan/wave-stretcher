@@ -9,7 +9,7 @@
 
 MP3InputFile mp3_read_file(char *filename) {
 
-    MP3File af = (MP3File) malloc(sizeof(MP3File_Data));
+    MP3InputFile af = (MP3InputFile) malloc(sizeof(MP3File_Input_Data));
 
     af->filename = filename;
 
@@ -160,8 +160,81 @@ Samples mp3_get_audio(MP3InputFile af, int nsmps) {
 }
 
 
-void mp3_input_cleanup(MP3InputFile af)
-{
+void mp3_input_cleanup(MP3InputFile af) {
+
+}
+
+
+
+MP3OutputFile mp3_write_file(char *filename,
+                             int channels,
+                             int samplerate,
+                             int bitrate,
+                             int mode,
+                             int quality) {
+
+    MP3OutputFile af = (MP3OutputFile) malloc(sizeof(MP3File_Output_Data));
+
+    af->filename = filename;
+    af->sf = fopen(af->filename);
+
+
+    af->channels = channels;
+    af->samplerate = samplerate;
+    af->bitrate = bitrate;
+    af->mode = mode;
+    af->quality = quality;
+
+    af->lame = lame_init();
+
+    lame_set_num_channels(af->lame,af->channels);
+    lame_set_in_samplerate(af->lame,af->samplerate);
+    lame_set_brate(af->lame,af->bitrate);
+    lame_set_mode(af->lame,af->mode);
+    lame_set_quality(af->lame,af->quality);   /* 2=high  5 = medium  7=low */ 
+
+    af->lame_init_check = lame_init_params(af->lame);
+
+    af->buf_size = (1.25 * (float) args.window_size) + 7200;
+
+    af->buf = (unsigned char) malloc(sizeof(unsigned char) * af->buf_size);
+
+    return af;
+
+}
+
+
+void mp3_write_data(MP3OutputFile af, Samples smps) {
+
+    int write;
+    write = lame_encode_buffer_ieee_float(af->lame,
+                                          smps->buffers[0],
+                                          smps->buffers[1],
+                                          smps->size,
+                                          af->buf,
+                                          af->buf_size);
+    fwrite(af->buf, write, 1, af->sf);
+
+    sbuffer_cleanup(smps);
+
+}
+
+void mp3_output_cleanup(MP3OutputFile af) {
+
+    int write;
+    write = lame_encode_flush(af->lame, af->buf, af->buf_size);
+    if (write > 0) {
+        fwrite(af->buf, write, 1, af->sf);
+    }
+
+    lame_mp3_tags_fid(af->lame, af->sf);
+
+    lame_close(af->lame);
+    fclose(af->sf);
+
+    free(af->buf);
+
+    free(af);
 
 }
 
