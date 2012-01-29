@@ -1,1 +1,1 @@
-gcc -o wavstretch wav_stretch.c audiofile.c fft.c stretch.c sample.c -Wall -g -lfftw3f -lm -lsndfile
+gcc -o wavstretch wav_stretch.c wavefile.c fft.c stretch.c sample.c -Wall -g -lfftw3f -lm -lsndfile

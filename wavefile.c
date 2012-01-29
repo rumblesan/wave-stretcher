@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <sndfile.h>
-#include "audiofile.h"
+#include "wavefile.h"
 #include "sample.h"
 
 
