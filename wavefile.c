@@ -88,29 +88,3 @@ void cleanup_audio_file(AudioFile af) {
 }
 
 
-#ifdef AUDIO_TEST
-
-int main() {
-
-    int read_size = 20;
-    Samples smps;
-    AudioFile af = read_audio_file("input.wav");
-    AudioFile of = write_audio_file("output.wav",
-                                    af->info.samplerate,
-                                    af->info.channels,
-                                    af->info.format);
-
-    while (af->finished != 1) {
-        smps = get_audio_data(af, read_size);
-        write_audio_data(of, smps);
-    }
-
-    cleanup_audio_file(af);
-    cleanup_audio_file(of);
-
-    return 0;
-}
-
-#endif
-
-

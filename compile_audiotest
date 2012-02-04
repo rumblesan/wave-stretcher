@@ -1,0 +1,1 @@
+gcc -o audio_test audiotest.c mp3file.c wavefile.c sample.c -Wall -g -lmad -lsndfile -lmp3lame
