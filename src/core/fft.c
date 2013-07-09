@@ -1,8 +1,8 @@
 #include <fftw3.h>
 #include <math.h>
 #include <stdlib.h>
-#include "fft.h"
-#include "sample.h"
+#include "core/fft.h"
+#include "core/sample.h"
 
 
 FFT fft_create (int window_size) {

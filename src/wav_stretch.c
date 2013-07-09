@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "wav_stretch.h"
-#include "fft.h"
-#include "stretch.h"
-#include "wavefile.h"
-#include "sample.h"
+#include "core/fft.h"
+#include "core/stretch.h"
+#include "core/wavefile.h"
+#include "core/sample.h"
 
 void usage(int exitval) {
     printf("Wave Stretch usage:\n");

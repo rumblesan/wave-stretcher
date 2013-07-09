@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "sample.h"
+#include "core/sample.h"
 
 Samples sbuffer_create(int channels, int size) {
     Samples smps   = (Samples) malloc(sizeof(Samples_Data));

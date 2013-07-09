@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <sndfile.h>
-#include "wavefile.h"
-#include "sample.h"
+#include "core/wavefile.h"
+#include "core/sample.h"
 
 
 AudioFile read_audio_file(char *filename) {
