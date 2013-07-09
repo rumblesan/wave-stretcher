@@ -1,6 +1,6 @@
 # Wave Stretcher
 
-A reimplementation of the (Paulstretch)[https://github.com/paulnasca/paulstretch_cpp] algorithm in pure C
+A reimplementation of the [Paulstretch](https://github.com/paulnasca/paulstretch_cpp) algorithm in pure C
 
 ## Description
 
