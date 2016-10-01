@@ -1,10 +1,10 @@
-# Lib PStretch
+# Wave Stretcher
 
 A reimplementation of the [Paulstretch](https://github.com/paulnasca/paulstretch_cpp) algorithm in pure C
 
 ## Description
 
-I want to use the Paul Stretch algorithm in other projects, so I'm turning it into a library.
+I wanted to learn how the Paulstretch, extreme slowdown algorithm worked, and I wanted a CLI version of it for my own projects, so I wrote this.
 
 Many thanks to [Paul Nasca](http://www.paulnasca.com/) for creating the original program and for pointing out some useful stuff to me.
 

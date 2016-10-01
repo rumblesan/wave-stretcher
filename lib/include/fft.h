@@ -2,7 +2,7 @@
 #define FFT_H
 
 #include <fftw3.h>
-#include "core/sample.h"
+#include "sample.h"
 
 typedef struct fft_data *FFT;
 

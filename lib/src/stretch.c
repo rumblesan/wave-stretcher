@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "core/stretch.h"
-#include "core/sample.h"
+#include "stretch.h"
+#include "sample.h"
 
 
 Stretch stretch_create(int channels,

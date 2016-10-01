@@ -4,8 +4,8 @@
 #include <string.h>
 #include <lame/lame.h>
 #include <limits.h>
-#include "core/sample.h"
-#include "core/mp3file.h"
+#include "sample.h"
+#include "mp3file.h"
 
 MP3InputFile mp3_read_file(char *filename) {
 

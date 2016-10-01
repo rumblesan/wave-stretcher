@@ -4,6 +4,7 @@
 #include <mad.h>
 #include <stdio.h>
 #include "sample.h"
+#include "lame/lame.h"
 
 #define INPUT_BUFFER_SIZE	(5*8192)
 

@@ -1,0 +1,17 @@
+# - Config file for the LibPStretch package
+# It defines the following variables
+#  LIBPSTRETCH_INCLUDE_DIRS - include directories for LibPStretch
+#  LIBPSTRETCH_LIBRARIES    - libraries to link against
+#  LIBPSTRETCH_EXECUTABLE   - the bar executable
+
+# Compute paths
+get_filename_component(LIBPSTRETCH_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(LIBPSTRETCH_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+if(NOT TARGET libpstretch AND NOT LibPStretch_BINARY_DIR)
+    include("${LIBPSTRETCH_CMAKE_DIR}/LibPStretchTargets.cmake")
+endif()
+
+# These are IMPORTED targets created by LibPStretchTargets.cmake
+set(LIBPSTRETCH_LIBRARIES libpstretch)

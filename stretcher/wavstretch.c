@@ -1,11 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "wav_stretch.h"
-#include "core/fft.h"
-#include "core/stretch.h"
-#include "core/wavefile.h"
-#include "core/sample.h"
+#include "wavstretch.h"
+#include "pstretch/pstretch.h"
 
 void usage(int exitval) {
     printf("Wave Stretch usage:\n");
